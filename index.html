@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferrailles de Louis — Ferronnerie d'art & fer forgé à la main</title>
+<meta name="description" content="Ferrailles de Louis : créations en fer forgé à la main. Portails, mobilier, luminaires et décoration. Pièces uniques et travail sur mesure.">
+
+<!-- Polices -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,800;1,9..144,400&family=Karla:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    /* Palette forge */
+    --forge:      #14100d;  /* fond, noir suie chaud */
+    --forge-deep: #0d0a08;
+    --iron:       #221d19;  /* panneaux / cartes */
+    --iron-light: #342d27;
+    --ash:        #b3a99c;  /* texte courant */
+    --bone:       #ede6da;  /* titres, texte clair */
+    --ember:      #e0682c;  /* métal chaud, accent */
+    --ember-deep: #9e2b0e;
+
+    /* Couleurs de revenu de l'acier — l'élément signature */
+    --temper: linear-gradient(90deg,
+      #e3b23c 0%,   /* paille */
+      #b5651d 24%,  /* bronze */
+      #7a3b69 48%,  /* violet */
+      #2e6e7e 74%,  /* paon */
+      #2c4a7a 100%  /* bleu acier */
+    );
+
+    --maxw: 1160px;
+    --ease: cubic-bezier(.2,.7,.2,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:var(--forge);
+    color:var(--ash);
+    font-family:"Karla", system-ui, sans-serif;
+    font-size:18px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3{
+    font-family:"Fraunces", Georgia, serif;
+    color:var(--bone);
+    font-weight:600;
+    line-height:1.06;
+    margin:0;
+  }
+
+  a{ color:inherit; }
+  img{ display:block; max-width:100%; }
+
+  .wrap{ width:100%; max-width:var(--maxw); margin:0 auto; padding:0 clamp(20px,5vw,40px); }
+
+  .eyebrow{
+    font-family:"Karla", sans-serif;
+    text-transform:uppercase;
+    letter-spacing:.28em;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--ember);
+    margin:0 0 18px;
+  }
+
+  /* Filet couleurs de revenu — signature réutilisée partout */
+  .temper-rule{ height:3px; width:100%; background:var(--temper); border:0; margin:0; opacity:.9; }
+
+  /* ---------- Barre de nav ---------- */
+  header.nav{
+    position:sticky; top:0; z-index:50;
+    background:color-mix(in srgb, var(--forge) 82%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid #ffffff10;
+  }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; height:70px; }
+  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:20px; color:var(--bone); letter-spacing:.01em; text-decoration:none; display:flex; align-items:center; gap:12px; }
+  .brand .mark{ width:26px; height:26px; flex:none; }
+  .nav-links{ display:flex; gap:30px; align-items:center; }
+  .nav-links a{ text-decoration:none; font-size:15px; font-weight:500; color:var(--ash); transition:color .2s; }
+  .nav-links a:hover{ color:var(--bone); }
+  .nav-cta{ text-decoration:none; font-size:14px; font-weight:700; color:var(--forge); background:var(--ember);
+    padding:10px 18px; border-radius:2px; transition:transform .2s var(--ease), background .2s; }
+  .nav-cta:hover{ background:#f0813f; transform:translateY(-1px); }
+  @media(max-width:720px){ .nav-links a:not(.nav-cta){ display:none; } }
+
+  /* ---------- Hero ---------- */
+  .hero{ position:relative; padding:clamp(90px,16vh,180px) 0 clamp(70px,10vh,120px); overflow:hidden; }
+  .glow{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(60% 55% at 78% 30%, #e0682c33 0%, transparent 60%),
+      radial-gradient(45% 40% at 90% 20%, #9e2b0e40 0%, transparent 65%);
+    animation:flicker 7s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{ opacity:.85; } 40%{ opacity:1; } 55%{ opacity:.78; } 70%{ opacity:.95; }
+  }
+  .hero .wrap{ position:relative; z-index:1; }
+  .hero h1{
+    font-size:clamp(52px, 11vw, 132px);
+    font-weight:600;
+    letter-spacing:-.02em;
+    margin:0 0 4px;
+  }
+  .hero h1 .amp{ font-style:italic; font-weight:400; color:var(--ember); }
+  .hero-lede{ max-width:560px; font-size:clamp(18px,2.4vw,22px); color:#cfc6ba; margin:26px 0 0; }
+  .hero-sig{ display:block; width:min(420px,80%); height:3px; background:var(--temper); margin:34px 0 40px; border-radius:2px; }
+  .hero-actions{ display:flex; flex-wrap:wrap; gap:16px; }
+  .btn{ text-decoration:none; font-weight:700; font-size:15px; padding:15px 26px; border-radius:2px; transition:transform .2s var(--ease), background .2s, border-color .2s; }
+  .btn-primary{ background:var(--ember); color:var(--forge); }
+  .btn-primary:hover{ background:#f0813f; transform:translateY(-2px); }
+  .btn-ghost{ background:transparent; color:var(--bone); border:1px solid #ffffff2e; }
+  .btn-ghost:hover{ border-color:var(--ember); color:var(--ember); transform:translateY(-2px); }
+
+  /* ---------- Sections ---------- */
+  .section{ padding:clamp(70px,11vh,120px) 0; }
+  .section-head{ max-width:640px; margin-bottom:52px; }
+  .section-head h2{ font-size:clamp(32px,5vw,52px); letter-spacing:-.015em; }
+  .section-head p{ margin:20px 0 0; color:var(--ash); font-size:19px; }
+
+  /* Savoir-faire */
+  .about{ background:var(--forge-deep); border-top:1px solid #ffffff0d; border-bottom:1px solid #ffffff0d; }
+  .about-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(30px,6vw,80px); align-items:center; }
+  .about-copy p{ margin:0 0 18px; }
+  .about-copy p:last-child{ margin-bottom:0; }
+  .about-copy strong{ color:var(--bone); font-weight:700; }
+  .figures{ display:flex; gap:14px; margin-top:36px; flex-wrap:wrap; }
+  .figure{ background:var(--iron); border:1px solid #ffffff10; padding:20px 22px; border-radius:3px; flex:1; min-width:130px; }
+  .figure b{ display:block; font-family:"Fraunces",serif; font-size:30px; color:var(--ember); line-height:1; }
+  .figure span{ font-size:14px; }
+  /* Portrait de l'atelier (placeholder texturé — remplaçable par une photo) */
+  .about-media{ position:relative; aspect-ratio:4/5; border-radius:4px; overflow:hidden;
+    border:1px solid #ffffff14;
+    background:
+      linear-gradient(145deg, #2b2620, #17130f 70%),
+      repeating-linear-gradient(115deg, #ffffff05 0 2px, transparent 2px 9px);
+    display:flex; align-items:flex-end; }
+  .about-media::before{ content:""; position:absolute; inset:0;
+    background:radial-gradient(50% 40% at 70% 25%, #e0682c30, transparent 70%); }
+  .about-media figcaption{ position:relative; padding:22px; font-size:13px; color:#8b8177;
+    letter-spacing:.04em; text-transform:uppercase; }
+
+  /* ---------- Galerie créations ---------- */
+  .gallery{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .card{ position:relative; border-radius:4px; overflow:hidden; background:var(--iron);
+    border:1px solid #ffffff10; aspect-ratio:1/1;
+    transition:transform .3s var(--ease), border-color .3s; }
+  .card.tall{ aspect-ratio:1/1.3; }
+  .card:hover{ transform:translateY(-4px); border-color:#ffffff26; }
+  /* Fond « métal martelé » du placeholder — masqué dès qu'une <img> est ajoutée */
+  .card .ph{ position:absolute; inset:0;
+    background:
+      radial-gradient(60% 50% at 30% 20%, #ffffff0a, transparent 60%),
+      repeating-linear-gradient(48deg, #ffffff06 0 3px, transparent 3px 11px),
+      linear-gradient(160deg, #322b25, #191410); }
+  .card img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .card .meta{ position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:20px; background:linear-gradient(transparent, #0b0806e0 78%); }
+  .card .cat{ font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--ember); font-weight:700; }
+  .card .name{ font-family:"Fraunces",serif; color:var(--bone); font-size:22px; margin-top:5px; }
+  @media(max-width:860px){ .gallery{ grid-template-columns:repeat(2,1fr); } .card.tall{ aspect-ratio:1/1; } }
+  @media(max-width:520px){ .gallery{ grid-template-columns:1fr; } }
+
+  /* ---------- Sur mesure ---------- */
+  .commande{ background:var(--forge-deep); border-top:1px solid #ffffff0d; }
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:44px; }
+  .step{ border-top:1px solid #ffffff18; padding-top:22px; }
+  .step .no{ font-family:"Fraunces",serif; font-size:15px; color:var(--ember); letter-spacing:.1em; }
+  .step h3{ font-size:22px; margin:12px 0 10px; }
+  .step p{ margin:0; font-size:16px; }
+  @media(max-width:720px){ .steps{ grid-template-columns:1fr; } }
+
+  /* ---------- Contact ---------- */
+  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(30px,6vw,70px); align-items:start; }
+  .contact-copy h2{ font-size:clamp(32px,5vw,52px); }
+  .contact-copy p{ margin:20px 0 0; }
+  .contact-lines{ list-style:none; margin:34px 0 0; padding:0; }
+  .contact-lines li{ display:flex; gap:16px; align-items:flex-start; padding:18px 0; border-top:1px solid #ffffff14; }
+  .contact-lines li:last-child{ border-bottom:1px solid #ffffff14; }
+  .contact-lines .lbl{ font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#8b8177; min-width:96px; padding-top:3px; }
+  .contact-lines .val{ font-size:19px; color:var(--bone); text-decoration:none; }
+  .contact-lines a.val:hover{ color:var(--ember); }
+  .contact-card{ background:var(--iron); border:1px solid #ffffff12; border-radius:5px; padding:34px; }
+  .contact-card h3{ font-size:26px; margin-bottom:8px; }
+  .contact-card p{ margin:0 0 26px; font-size:16px; }
+  .contact-card .btn-primary{ display:inline-block; }
+  @media(max-width:720px){ .contact-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- Footer ---------- */
+  footer{ border-top:1px solid #ffffff12; padding:44px 0; }
+  .foot-inner{ display:flex; flex-wrap:wrap; gap:16px; justify-content:space-between; align-items:center; }
+  .foot-inner p{ margin:0; font-size:14px; color:#8b8177; }
+  .foot-brand{ font-family:"Fraunces",serif; color:var(--bone); font-size:18px; }
+
+  /* Révélation au défilement */
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  :focus-visible{ outline:2px solid var(--ember); outline-offset:3px; border-radius:2px; }
+
+  @media(prefers-reduced-motion:reduce){
+    *{ animation:none !important; scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= NAV ======================= -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Ferrailles de Louis, accueil">
+      <!-- Petit logo : enclume stylisée -->
+      <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M4 12h18l-3 5h-8l-2 3H5a3 3 0 0 1-3-3v-2a3 3 0 0 1 2-2.8Z" fill="#e0682c"/>
+        <path d="M11 24h8l-1.5 4h-5L11 24Z" fill="#b3a99c"/>
+        <rect x="19" y="8" width="9" height="4" rx="1" fill="#b3a99c"/>
+      </svg>
+      Ferrailles de Louis
+    </a>
+    <nav class="nav-links" aria-label="Navigation principale">
+      <a href="#savoir-faire">Le savoir-faire</a>
+      <a href="#creations">Les créations</a>
+      <a href="#sur-mesure">Sur mesure</a>
+      <a class="nav-cta" href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ======================= HERO ======================= -->
+<section class="hero" id="top">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow">Atelier de ferronnerie d'art</p>
+    <h1>Ferrailles <span class="amp">de</span> Louis</h1>
+    <span class="hero-sig" aria-hidden="true"></span>
+    <p class="hero-lede">
+      Le fer forgé à la main, pièce par pièce. À l'atelier, la ferraille
+      récupérée reprend vie sous le marteau : portails, mobilier, luminaires
+      et objets uniques, façonnés à chaud.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#creations">Voir les créations</a>
+      <a class="btn btn-ghost" href="#contact">Demander un devis</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= SAVOIR-FAIRE ======================= -->
+<section class="section about" id="savoir-faire">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="about-copy reveal">
+        <p class="eyebrow">Le savoir-faire</p>
+        <h2>Du feu, un marteau,<br>et beaucoup de patience.</h2>
+        <p style="margin-top:26px;">
+          Louis travaille le fer à l'ancienne : chauffé à la forge, martelé sur
+          l'enclume, plié et assemblé à la main. <strong>Aucune pièce n'est
+          identique</strong> — chaque courbe garde la trace de l'outil et du geste.
+        </p>
+        <p>
+          Une bonne partie de la matière est <strong>récupérée puis remise en
+          œuvre</strong> : de la vieille ferraille qui retrouve une seconde vie,
+          transformée en objet solide et durable, fait pour traverser les années.
+        </p>
+        <div class="figures">
+          <div class="figure"><b>100 %</b><span>fait main</span></div>
+          <div class="figure"><b>Unique</b><span>chaque pièce</span></div>
+          <div class="figure"><b>Sur&nbsp;mesure</b><span>selon vos envies</span></div>
+        </div>
+      </div>
+
+      <!-- PHOTO DE L'ATELIER : remplace ce bloc par une vraie photo (voir notice en bas du code) -->
+      <figure class="about-media reveal" aria-label="Photo de l'atelier (à remplacer)">
+        <figcaption>Photo de l'atelier à ajouter ici</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CRÉATIONS ======================= -->
+<section class="section" id="creations">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Les créations</p>
+      <h2>Quelques pièces de l'atelier</h2>
+      <p>Un aperçu de ce que Louis réalise. Une idée en tête&nbsp;? Il la forge sur mesure.</p>
+    </div>
+
+    <!--
+      GALERIE : chaque carte affiche un fond « métal martelé » tant qu'il n'y a pas de photo.
+      Pour mettre une vraie photo, ajoute une balise <img ...> JUSTE APRÈS le <span class="ph">
+      (garde le reste). Exemple fourni dans la 1re carte ci-dessous, en commentaire.
+    -->
+    <div class="gallery">
+      <article class="card tall reveal">
+        <span class="ph" aria-hidden="true"></span>
+        <!-- Exemple photo : <img src="images/portail.jpg" alt="Portail en fer forgé"> -->
+        <div class="meta"><div class="cat">Portails & grilles</div><div class="name">Portail forgé</div></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta"><div class="cat">Mobilier</div><div class="name">Table & consoles</div></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta"><div class="cat">Luminaires</div><div class="name">Lampes & appliques</div></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta"><div class="cat">Décoration</div><div class="name">Pièces murales</div></div>
+      </article>
+
+      <article class="card tall reveal">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta"><div class="cat">Jardin</div><div class="name">Rosiers & treillages</div></div>
+      </article>
+
+      <article class="card reveal">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta"><div class="cat">Sur mesure</div><div class="name">Votre projet</div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= SUR MESURE ======================= -->
+<section class="section commande" id="sur-mesure">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Sur mesure</p>
+      <h2>Comment se passe une commande</h2>
+      <p>Du premier échange à la livraison, Louis vous accompagne à chaque étape.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="no">Étape 01</div>
+        <h3>On en parle</h3>
+        <p>Vous décrivez votre idée, vos dimensions, votre style. Un croquis et une photo suffisent pour démarrer.</p>
+      </div>
+      <div class="step reveal">
+        <div class="no">Étape 02</div>
+        <h3>Devis & dessin</h3>
+        <p>Louis propose un projet chiffré, avec les matériaux, les finitions et les délais. Rien n'est lancé sans votre accord.</p>
+      </div>
+      <div class="step reveal">
+        <div class="no">Étape 03</div>
+        <h3>Forge & pose</h3>
+        <p>La pièce est forgée à l'atelier, protégée contre la rouille, puis livrée — et posée si besoin.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CONTACT ======================= -->
+<section class="section" id="contact">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="contact-copy reveal">
+        <p class="eyebrow">Contact</p>
+        <h2>Parlons de votre projet</h2>
+        <p>Une commande, une question, une idée à concrétiser&nbsp;? Écrivez ou appelez Louis directement.</p>
+
+        <ul class="contact-lines">
+          <li>
+            <span class="lbl">Téléphone</span>
+            <!-- ⬇︎ Remplace le numéro (2 endroits : href et texte) -->
+            <a class="val" href="tel:+33600000000">06 00 00 00 00</a>
+          </li>
+          <li>
+            <span class="lbl">E-mail</span>
+            <!-- ⬇︎ Remplace l'adresse (2 endroits) -->
+            <a class="val" href="mailto:contact@ferraillesdelouis.fr">contact@ferraillesdelouis.fr</a>
+          </li>
+          <li>
+            <span class="lbl">Atelier</span>
+            <!-- ⬇︎ Remplace par la ville / le département -->
+            <span class="val">Votre ville, votre département</span>
+          </li>
+        </ul>
+      </div>
+
+      <aside class="contact-card reveal">
+        <h3>Demander un devis</h3>
+        <p>Décrivez votre projet en quelques mots — Louis vous répond avec plaisir.</p>
+        <!-- ⬇︎ Remplace l'e-mail par celui de Louis -->
+        <a class="btn btn-primary"
+           href="mailto:contact@ferraillesdelouis.fr?subject=Demande%20de%20devis%20—%20Ferrailles%20de%20Louis&body=Bonjour%20Louis,%0D%0A%0D%0AVoici%20mon%20projet%20:%0D%0A-%20Type%20de%20pièce%20:%0D%0A-%20Dimensions%20:%0D%0A-%20Style%20souhaité%20:%0D%0A-%20Délai%20:%0D%0A%0D%0AMerci%20!">
+          Écrire à Louis
+        </a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<hr class="temper-rule">
+
+<!-- ======================= FOOTER ======================= -->
+<footer>
+  <div class="wrap foot-inner">
+    <p class="foot-brand">Ferrailles de Louis</p>
+    <p>Ferronnerie d'art · Fer forgé à la main · © <span id="year"></span></p>
+  </div>
+</footer>
+
+<script>
+  // Année automatique
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Révélation douce au défilement
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold:.14 });
+    els.forEach(function(e){ io.observe(e); });
+  })();
+</script>
+
+<!--
+  ============================================================
+  NOTICE — COMMENT PERSONNALISER (à lire, puis tu peux l'effacer)
+  ============================================================
+
+  1) LES COORDONNÉES
+     Cherche les petites flèches "⬇︎" dans la section CONTACT et remplace :
+     - le numéro de téléphone,
+     - l'adresse e-mail (à changer à 3 endroits : les deux liens mailto et le lien "Écrire à Louis"),
+     - la ville / le département.
+
+  2) AJOUTER DES PHOTOS DES CRÉATIONS
+     - Crée un dossier "images" à côté de ce fichier index.html.
+     - Mets-y les photos (ex : portail.jpg, table.jpg ...).
+     - Dans la GALERIE, ajoute une ligne <img> juste après <span class="ph"> :
+         <img src="images/portail.jpg" alt="Portail en fer forgé">
+       La photo recouvre alors automatiquement le fond gris. Répète pour chaque carte.
+
+  3) PHOTO DE L'ATELIER (section Le savoir-faire)
+     Remplace tout le bloc <figure class="about-media">...</figure> par :
+         <img class="about-media" src="images/atelier.jpg" alt="Louis à la forge"
+              style="object-fit:cover;">
+
+  4) LE TEXTE
+     Tous les textes sont modifiables directement dans le code (titres, descriptions...).
+     Adapte-les avec les vrais mots de ton père.
+-->
+
+</body>
+</html>
