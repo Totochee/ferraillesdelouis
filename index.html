@@ -6,181 +6,206 @@
 <title>Ferrailles de Louis — Ferronnerie d'art & fer forgé à la main</title>
 <meta name="description" content="Ferrailles de Louis : créations en fer forgé à la main. Portails, mobilier, luminaires et décoration. Pièces uniques, réservation en ligne.">
 
-<!-- Polices -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,800;1,9..144,400&family=Karla:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-<!-- Base de données partagée (pour les réservations) -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
   :root{
-    --forge:#14100d; --forge-deep:#0d0a08; --iron:#221d19; --iron-light:#342d27;
-    --ash:#b3a99c; --bone:#ede6da; --ember:#e0682c; --ember-deep:#9e2b0e;
-    --temper:linear-gradient(90deg,#e3b23c 0%,#b5651d 24%,#7a3b69 48%,#2e6e7e 74%,#2c4a7a 100%);
-    --maxw:1160px; --ease:cubic-bezier(.2,.7,.2,1);
+    --forge:#14100d; --forge-deep:#0d0a08; --iron:#1e1a16; --iron-2:#2a241f;
+    --line:#ffffff1a; --line-strong:#ffffff2e;
+    --ash:#bdb3a6; --ash-dim:#8b8177; --bone:#f2ece2;
+    --ember:#e0682c; --ember-hi:#f2823f;
+    --temper:linear-gradient(90deg,#e3b23c,#b5651d 24%,#7a3b69 48%,#2e6e7e 74%,#2c4a7a);
+    --maxw:1140px; --ease:cubic-bezier(.2,.7,.2,1);
   }
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
-  body{ margin:0; background:var(--forge); color:var(--ash); font-family:"Karla",system-ui,sans-serif;
-    font-size:18px; line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-  h1,h2,h3{ font-family:"Fraunces",Georgia,serif; color:var(--bone); font-weight:600; line-height:1.06; margin:0; }
-  a{ color:inherit; }
+  body{ margin:0; background:var(--forge); color:var(--ash);
+    font-family:"Karla",system-ui,sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:"Fraunces",Georgia,serif; color:var(--bone); font-weight:600; line-height:1.1; margin:0; }
   img{ display:block; max-width:100%; }
   .wrap{ width:100%; max-width:var(--maxw); margin:0 auto; padding:0 clamp(20px,5vw,40px); }
-  .eyebrow{ font-family:"Karla",sans-serif; text-transform:uppercase; letter-spacing:.28em; font-size:12.5px;
-    font-weight:700; color:var(--ember); margin:0 0 18px; }
-  .temper-rule{ height:3px; width:100%; background:var(--temper); border:0; margin:0; opacity:.9; }
+  .eyebrow{ text-transform:uppercase; letter-spacing:.26em; font-size:12px; font-weight:700;
+    color:var(--ember); margin:0 0 16px; }
 
-  /* NAV */
-  header.nav{ position:sticky; top:0; z-index:50; background:color-mix(in srgb,var(--forge) 82%,transparent);
-    backdrop-filter:blur(10px); border-bottom:1px solid #ffffff10; }
-  .nav-inner{ display:flex; align-items:center; justify-content:space-between; height:70px; }
-  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:20px; color:var(--bone); text-decoration:none;
-    display:flex; align-items:center; gap:12px; }
+  /* ---------- NAV ---------- */
+  header.nav{ position:sticky; top:0; z-index:60; background:#100d0af2;
+    backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; height:72px; gap:20px; }
+  .brand{ display:flex; align-items:center; gap:11px; text-decoration:none; flex:none; }
   .brand .mark{ width:26px; height:26px; flex:none; }
-  .nav-links{ display:flex; gap:30px; align-items:center; }
-  .nav-links a{ text-decoration:none; font-size:15px; font-weight:500; color:var(--ash); transition:color .2s; }
-  .nav-links a:hover{ color:var(--bone); }
-  .nav-cta{ text-decoration:none; font-size:14px; font-weight:700; color:var(--forge); background:var(--ember);
-    padding:10px 18px; border-radius:2px; transition:transform .2s var(--ease),background .2s; }
-  .nav-cta:hover{ background:#f0813f; transform:translateY(-1px); }
-  @media(max-width:720px){ .nav-links a:not(.nav-cta){ display:none; } }
+  .brand span{ font-family:"Fraunces",serif; font-weight:600; font-size:19px; color:var(--bone); white-space:nowrap; }
+  .nav-links{ display:flex; align-items:center; gap:8px; }
+  .nav-links a{ text-decoration:none; font-size:15px; font-weight:500; color:var(--ash);
+    padding:9px 14px; border-radius:3px; transition:color .18s, background .18s; }
+  .nav-links a:hover{ color:var(--bone); background:#ffffff0f; }
+  .nav-cta{ margin-left:8px; text-decoration:none; font-size:14.5px; font-weight:700; color:#160f09 !important;
+    background:var(--ember); padding:11px 20px !important; border-radius:3px;
+    transition:background .18s, transform .18s var(--ease); }
+  .nav-cta:hover{ background:var(--ember-hi) !important; transform:translateY(-1px); }
+  .burger{ display:none; background:none; border:1px solid var(--line-strong); border-radius:3px;
+    width:44px; height:40px; cursor:pointer; align-items:center; justify-content:center; }
+  .burger span{ display:block; width:18px; height:2px; background:var(--bone); position:relative; }
+  .burger span::before,.burger span::after{ content:""; position:absolute; left:0; width:18px; height:2px; background:var(--bone); }
+  .burger span::before{ top:-6px; } .burger span::after{ top:6px; }
+  @media(max-width:820px){
+    .burger{ display:flex; }
+    .nav-links{ position:absolute; top:72px; left:0; right:0; flex-direction:column; align-items:stretch;
+      gap:0; background:#100d0afa; border-bottom:1px solid var(--line); padding:10px 20px 20px;
+      display:none; }
+    .nav-links.open{ display:flex; }
+    .nav-links a{ padding:14px 6px; border-bottom:1px solid var(--line); border-radius:0; }
+    .nav-cta{ margin:14px 0 0; text-align:center; border-bottom:0 !important; }
+  }
 
-  /* HERO */
-  .hero{ position:relative; padding:clamp(90px,16vh,180px) 0 clamp(70px,10vh,120px); overflow:hidden; }
-  .glow{ position:absolute; inset:0; z-index:0; pointer-events:none;
-    background:radial-gradient(60% 55% at 78% 30%,#e0682c33 0%,transparent 60%),
-               radial-gradient(45% 40% at 90% 20%,#9e2b0e40 0%,transparent 65%);
-    animation:flicker 7s ease-in-out infinite; }
-  @keyframes flicker{ 0%,100%{opacity:.85;} 40%{opacity:1;} 55%{opacity:.78;} 70%{opacity:.95;} }
-  .hero .wrap{ position:relative; z-index:1; }
-  .hero h1{ font-size:clamp(52px,11vw,132px); letter-spacing:-.02em; margin:0 0 4px; }
-  .hero h1 .amp{ font-style:italic; font-weight:400; color:var(--ember); }
-  .hero-lede{ max-width:560px; font-size:clamp(18px,2.4vw,22px); color:#cfc6ba; margin:26px 0 0; }
-  .hero-sig{ display:block; width:min(420px,80%); height:3px; background:var(--temper); margin:34px 0 40px; border-radius:2px; }
-  .hero-actions{ display:flex; flex-wrap:wrap; gap:16px; }
-  .btn{ text-decoration:none; font-weight:700; font-size:15px; padding:15px 26px; border-radius:2px;
-    transition:transform .2s var(--ease),background .2s,border-color .2s; }
-  .btn-primary{ background:var(--ember); color:var(--forge); }
-  .btn-primary:hover{ background:#f0813f; transform:translateY(-2px); }
-  .btn-ghost{ background:transparent; color:var(--bone); border:1px solid #ffffff2e; }
+  /* ---------- HERO ---------- */
+  .hero{ position:relative; padding:clamp(80px,14vh,150px) 0 clamp(64px,9vh,110px); overflow:hidden; }
+  .glow{ position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(58% 52% at 80% 32%,#e0682c30,transparent 62%),
+               radial-gradient(42% 38% at 92% 18%,#9e2b0e38,transparent 66%); }
+  .hero .wrap{ position:relative; }
+  .hero h1{ font-size:clamp(48px,10vw,120px); letter-spacing:-.02em; margin:0; }
+  .hero h1 .de{ font-style:italic; font-weight:400; color:var(--ember); }
+  .hero-sig{ display:block; width:min(400px,78%); height:3px; background:var(--temper); margin:30px 0 34px; border-radius:2px; }
+  .hero p{ max-width:540px; font-size:clamp(17px,2.2vw,21px); color:#cfc6ba; margin:0; }
+  .hero-actions{ display:flex; flex-wrap:wrap; gap:14px; margin-top:38px; }
+  .btn{ text-decoration:none; font-weight:700; font-size:15px; padding:15px 26px; border-radius:3px;
+    transition:transform .2s var(--ease), background .2s, border-color .2s; display:inline-block; }
+  .btn-primary{ background:var(--ember); color:#160f09; }
+  .btn-primary:hover{ background:var(--ember-hi); transform:translateY(-2px); }
+  .btn-ghost{ background:transparent; color:var(--bone); border:1px solid var(--line-strong); }
   .btn-ghost:hover{ border-color:var(--ember); color:var(--ember); transform:translateY(-2px); }
 
-  /* SECTIONS */
-  .section{ padding:clamp(70px,11vh,120px) 0; }
-  .section-head{ max-width:640px; margin-bottom:52px; }
-  .section-head h2{ font-size:clamp(32px,5vw,52px); letter-spacing:-.015em; }
-  .section-head p{ margin:20px 0 0; color:var(--ash); font-size:19px; }
+  /* ---------- SECTIONS ---------- */
+  .section{ padding:clamp(64px,10vh,110px) 0; }
+  .section-head{ max-width:620px; margin-bottom:48px; }
+  .section-head h2{ font-size:clamp(30px,4.6vw,48px); letter-spacing:-.015em; }
+  .section-head p{ margin:18px 0 0; font-size:18px; }
 
-  /* SAVOIR-FAIRE */
-  .about{ background:var(--forge-deep); border-top:1px solid #ffffff0d; border-bottom:1px solid #ffffff0d; }
-  .about-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(30px,6vw,80px); align-items:center; }
-  .about-copy p{ margin:0 0 18px; }
-  .about-copy p:last-child{ margin-bottom:0; }
+  /* ---------- SAVOIR-FAIRE ---------- */
+  .about{ background:var(--forge-deep); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .about-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(32px,6vw,72px); align-items:center; }
+  .about-copy p{ margin:0 0 16px; }
   .about-copy strong{ color:var(--bone); font-weight:700; }
-  .figures{ display:flex; gap:14px; margin-top:36px; flex-wrap:wrap; }
-  .figure{ background:var(--iron); border:1px solid #ffffff10; padding:20px 22px; border-radius:3px; flex:1; min-width:130px; }
-  .figure b{ display:block; font-family:"Fraunces",serif; font-size:30px; color:var(--ember); line-height:1; }
-  .figure span{ font-size:14px; }
-  .about-media{ position:relative; aspect-ratio:4/5; border-radius:4px; overflow:hidden; border:1px solid #ffffff14;
-    background:linear-gradient(145deg,#2b2620,#17130f 70%),
-      repeating-linear-gradient(115deg,#ffffff05 0 2px,transparent 2px 9px);
+  .figures{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:34px; }
+  .figure{ background:var(--iron); border:1px solid var(--line); padding:18px; border-radius:4px; }
+  .figure b{ display:block; font-family:"Fraunces",serif; font-size:26px; color:var(--ember); line-height:1.1; }
+  .figure span{ font-size:13.5px; }
+  .about-media{ position:relative; aspect-ratio:4/5; border-radius:5px; overflow:hidden; border:1px solid var(--line);
+    background:linear-gradient(150deg,#2b2620,#16120e 72%),
+      repeating-linear-gradient(115deg,#ffffff05 0 2px,transparent 2px 10px);
     display:flex; align-items:flex-end; }
   .about-media::before{ content:""; position:absolute; inset:0;
-    background:radial-gradient(50% 40% at 70% 25%,#e0682c30,transparent 70%); }
-  .about-media figcaption{ position:relative; padding:22px; font-size:13px; color:#8b8177; letter-spacing:.04em; text-transform:uppercase; }
+    background:radial-gradient(52% 40% at 68% 26%,#e0682c26,transparent 72%); }
+  .about-media figcaption{ position:relative; padding:20px; font-size:12px; color:var(--ash-dim);
+    letter-spacing:.14em; text-transform:uppercase; }
+  @media(max-width:820px){ .about-grid{ grid-template-columns:1fr; } .about-media{ aspect-ratio:16/10; } }
 
-  /* GALERIE */
-  .gallery{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
-  .card{ position:relative; border-radius:4px; overflow:hidden; background:var(--iron); border:1px solid #ffffff10;
-    aspect-ratio:1/1; transition:transform .3s var(--ease),border-color .3s; }
-  .card.tall{ aspect-ratio:1/1.3; }
-  .card:hover{ transform:translateY(-4px); border-color:#ffffff26; }
-  .card .ph{ position:absolute; inset:0;
-    background:radial-gradient(60% 50% at 30% 20%,#ffffff0a,transparent 60%),
-      repeating-linear-gradient(48deg,#ffffff06 0 3px,transparent 3px 11px),
-      linear-gradient(160deg,#322b25,#191410); }
-  .card img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-  .card .meta{ position:absolute; left:0; right:0; bottom:0; z-index:3;
-    padding:20px; background:linear-gradient(transparent,#0b0806e0 78%); }
-  .card .cat{ font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--ember); font-weight:700; }
-  .card .name{ font-family:"Fraunces",serif; color:var(--bone); font-size:22px; margin-top:5px; }
-  .card-action{ display:flex; align-items:center; gap:10px; margin-top:14px; }
-  .reserve-btn{ font-family:"Karla",sans-serif; font-weight:700; font-size:13px; letter-spacing:.02em;
-    color:var(--forge); background:var(--ember); border:0; border-radius:2px; padding:9px 16px; cursor:pointer;
-    text-decoration:none; display:inline-block; transition:background .2s,transform .2s; }
-  .reserve-btn:hover{ background:#f0813f; transform:translateY(-1px); }
-  .reserve-btn:disabled{ background:#3a332d; color:#8b8177; cursor:not-allowed; transform:none; }
+  /* ---------- GALERIE (grille régulière) ---------- */
+  .gallery{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  @media(max-width:900px){ .gallery{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:560px){ .gallery{ grid-template-columns:1fr; } }
+
+  .card{ display:flex; flex-direction:column; background:var(--iron); border:1px solid var(--line);
+    border-radius:5px; overflow:hidden; transition:transform .28s var(--ease), border-color .28s; }
+  .card:hover{ transform:translateY(-3px); border-color:var(--line-strong); }
+
+  /* Visuel : hauteur identique partout */
+  .card .visual{ position:relative; aspect-ratio:4/3; overflow:hidden; background:var(--iron-2); }
+  .card .visual .ph{ position:absolute; inset:0;
+    background:repeating-linear-gradient(45deg,#ffffff07 0 2px,transparent 2px 10px),
+      linear-gradient(160deg,#332c26,#1a1511); }
+  .card .visual .ph-icon{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .card .visual .ph-icon svg{ width:44px; height:44px; opacity:.3; }
+  .card .visual img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+
+  /* Corps : hauteur égalisée par flex */
+  .card .body{ padding:20px; display:flex; flex-direction:column; flex:1; gap:4px; }
+  .card .cat{ font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--ember); font-weight:700; }
+  .card .name{ font-family:"Fraunces",serif; color:var(--bone); font-size:21px; line-height:1.25; }
+  .card .desc{ font-size:14.5px; color:var(--ash-dim); margin:6px 0 0; }
+  .card .foot{ margin-top:auto; padding-top:18px; display:flex; align-items:center; gap:10px; }
+
+  .reserve-btn{ font-family:"Karla",sans-serif; font-weight:700; font-size:13.5px; color:#160f09;
+    background:var(--ember); border:0; border-radius:3px; padding:11px 18px; cursor:pointer;
+    text-decoration:none; display:inline-block; transition:background .18s, transform .18s; }
+  .reserve-btn:hover{ background:var(--ember-hi); transform:translateY(-1px); }
   .badge{ display:none; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
-    color:#0e0b08; background:var(--ash); padding:6px 11px; border-radius:2px; }
-  .card.is-reserved::after{ content:""; position:absolute; inset:0; background:#0b0806b0; z-index:2; }
+    color:#e6ddd2; background:#3a332d; border:1px solid var(--line-strong); padding:9px 14px; border-radius:3px; }
+
+  /* État réservé */
+  .card.is-reserved{ opacity:.72; }
+  .card.is-reserved .visual .ph,
+  .card.is-reserved .visual img{ filter:grayscale(.75) brightness(.55); }
   .card.is-reserved .badge{ display:inline-block; }
   .card.is-reserved .reserve-btn{ display:none; }
-  .card.is-reserved .ph, .card.is-reserved img{ filter:grayscale(.6) brightness(.5); }
-  @media(max-width:860px){ .gallery{ grid-template-columns:repeat(2,1fr); } .card.tall{ aspect-ratio:1/1; } }
-  @media(max-width:520px){ .gallery{ grid-template-columns:1fr; } }
+  .card.is-reserved:hover{ transform:none; }
 
-  /* SUR MESURE */
-  .commande{ background:var(--forge-deep); border-top:1px solid #ffffff0d; }
-  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:44px; }
-  .step{ border-top:1px solid #ffffff18; padding-top:22px; }
-  .step .no{ font-family:"Fraunces",serif; font-size:15px; color:var(--ember); letter-spacing:.1em; }
-  .step h3{ font-size:22px; margin:12px 0 10px; }
-  .step p{ margin:0; font-size:16px; }
-  @media(max-width:720px){ .steps{ grid-template-columns:1fr; } }
+  /* ---------- SUR MESURE ---------- */
+  .commande{ background:var(--forge-deep); border-top:1px solid var(--line); }
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:44px; }
+  .step{ border-top:1px solid var(--line-strong); padding-top:20px; }
+  .step .no{ font-family:"Fraunces",serif; font-size:14px; color:var(--ember); letter-spacing:.1em; }
+  .step h3{ font-size:21px; margin:10px 0 8px; }
+  .step p{ margin:0; font-size:15.5px; }
+  @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
 
-  /* CONTACT */
-  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(30px,6vw,70px); align-items:start; }
-  .contact-copy h2{ font-size:clamp(32px,5vw,52px); }
-  .contact-copy p{ margin:20px 0 0; }
-  .contact-lines{ list-style:none; margin:34px 0 0; padding:0; }
-  .contact-lines li{ display:flex; gap:16px; align-items:flex-start; padding:18px 0; border-top:1px solid #ffffff14; }
-  .contact-lines li:last-child{ border-bottom:1px solid #ffffff14; }
-  .contact-lines .lbl{ font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#8b8177; min-width:96px; padding-top:3px; }
-  .contact-lines .val{ font-size:19px; color:var(--bone); text-decoration:none; }
+  /* ---------- CONTACT ---------- */
+  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(30px,6vw,64px); align-items:start; }
+  .contact-copy h2{ font-size:clamp(30px,4.6vw,48px); }
+  .contact-copy > p{ margin:18px 0 0; }
+  .contact-lines{ list-style:none; margin:32px 0 0; padding:0; }
+  .contact-lines li{ display:flex; gap:14px; align-items:flex-start; padding:17px 0; border-top:1px solid var(--line); }
+  .contact-lines li:last-child{ border-bottom:1px solid var(--line); }
+  .contact-lines .lbl{ font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ash-dim);
+    min-width:92px; padding-top:4px; }
+  .contact-lines .val{ font-size:18px; color:var(--bone); text-decoration:none; }
   .contact-lines a.val:hover{ color:var(--ember); }
-  .contact-card{ background:var(--iron); border:1px solid #ffffff12; border-radius:5px; padding:34px; }
-  .contact-card h3{ font-size:26px; margin-bottom:8px; }
-  .contact-card p{ margin:0 0 26px; font-size:16px; }
-  @media(max-width:720px){ .contact-grid{ grid-template-columns:1fr; } }
+  .contact-card{ background:var(--iron); border:1px solid var(--line); border-radius:5px; padding:32px; }
+  .contact-card h3{ font-size:24px; margin-bottom:8px; }
+  .contact-card p{ margin:0 0 24px; font-size:15.5px; }
+  @media(max-width:760px){ .contact-grid{ grid-template-columns:1fr; } }
 
-  /* FOOTER */
-  footer{ border-top:1px solid #ffffff12; padding:44px 0; }
-  .foot-inner{ display:flex; flex-wrap:wrap; gap:16px; justify-content:space-between; align-items:center; }
-  .foot-inner p{ margin:0; font-size:14px; color:#8b8177; }
-  .foot-brand{ font-family:"Fraunces",serif; color:var(--bone); font-size:18px; }
+  /* ---------- FOOTER ---------- */
+  .temper-rule{ height:3px; border:0; margin:0; background:var(--temper); opacity:.9; }
+  footer{ border-top:1px solid var(--line); padding:40px 0; }
+  .foot-inner{ display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; align-items:center; }
+  .foot-inner p{ margin:0; font-size:13.5px; color:var(--ash-dim); }
+  .foot-brand{ font-family:"Fraunces",serif; color:var(--bone); font-size:17px; }
 
-  /* MODALE DE RÉSERVATION */
+  /* ---------- MODALE ---------- */
   .modal{ position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center;
-    padding:20px; background:#080604aa; backdrop-filter:blur(4px); }
+    padding:20px; background:#080604c4; backdrop-filter:blur(4px); }
   .modal.open{ display:flex; }
-  .modal-box{ width:100%; max-width:460px; background:var(--iron); border:1px solid #ffffff1a; border-radius:6px; padding:30px; }
-  .modal-box h3{ font-size:26px; margin:0 0 4px; }
-  .modal-box .sub{ font-size:14px; color:var(--ash); margin:0 0 22px; }
+  .modal-box{ width:100%; max-width:440px; background:var(--iron); border:1px solid var(--line-strong);
+    border-radius:6px; padding:30px; }
+  .modal-box h3{ font-size:24px; margin:0 0 4px; }
+  .modal-box .sub{ font-size:14px; color:var(--ash-dim); margin:0 0 22px; }
   .modal-box .sub b{ color:var(--ember); }
-  .field{ margin-bottom:16px; }
-  .field label{ display:block; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#8b8177; margin-bottom:7px; }
-  .field input, .field textarea{ width:100%; background:var(--forge); border:1px solid #ffffff1f; border-radius:3px;
-    color:var(--bone); font-family:"Karla",sans-serif; font-size:16px; padding:12px 14px; }
-  .field textarea{ min-height:80px; resize:vertical; }
+  .field{ margin-bottom:15px; }
+  .field label{ display:block; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ash-dim); margin-bottom:7px; }
+  .field input, .field textarea{ width:100%; background:var(--forge); border:1px solid var(--line-strong);
+    border-radius:3px; color:var(--bone); font-family:"Karla",sans-serif; font-size:16px; padding:12px 14px; }
+  .field textarea{ min-height:76px; resize:vertical; }
   .field input:focus, .field textarea:focus{ outline:none; border-color:var(--ember); }
-  .modal-actions{ display:flex; gap:12px; margin-top:24px; }
-  .modal-actions button{ flex:1; font-family:"Karla",sans-serif; font-weight:700; font-size:14px; padding:13px;
-    border-radius:3px; cursor:pointer; border:0; }
-  .btn-cancel{ background:transparent; color:var(--ash); border:1px solid #ffffff24; }
-  .btn-send{ background:var(--ember); color:var(--forge); }
+  .modal-actions{ display:flex; gap:12px; margin-top:22px; }
+  .modal-actions button{ flex:1; font-family:"Karla",sans-serif; font-weight:700; font-size:14px;
+    padding:13px; border-radius:3px; cursor:pointer; border:0; }
+  .btn-cancel{ background:transparent; color:var(--ash); border:1px solid var(--line-strong); }
+  .btn-send{ background:var(--ember); color:#160f09; }
   .btn-send:disabled{ opacity:.6; cursor:not-allowed; }
-  .form-msg{ font-size:14px; margin-top:14px; min-height:1.2em; }
-  .form-msg.error{ color:#f0813f; }
+  .form-msg{ font-size:14px; margin-top:12px; min-height:1.2em; }
+  .form-msg.error{ color:var(--ember-hi); }
   .form-msg.ok{ color:#7fd18a; }
 
-  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s var(--ease),transform .7s var(--ease); }
+  .reveal{ opacity:0; transform:translateY(20px); transition:opacity .65s var(--ease), transform .65s var(--ease); }
   .reveal.in{ opacity:1; transform:none; }
   :focus-visible{ outline:2px solid var(--ember); outline-offset:3px; border-radius:2px; }
-  @media(prefers-reduced-motion:reduce){ *{ animation:none !important; scroll-behavior:auto; }
-    .reveal{ opacity:1; transform:none; transition:none; } }
+  @media(prefers-reduced-motion:reduce){ .reveal{ opacity:1; transform:none; transition:none; } html{ scroll-behavior:auto; } }
 </style>
 </head>
 <body>
@@ -188,15 +213,16 @@
 <!-- NAV -->
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="#top" aria-label="Ferrailles de Louis, accueil">
+    <a class="brand" href="#top">
       <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
         <path d="M4 12h18l-3 5h-8l-2 3H5a3 3 0 0 1-3-3v-2a3 3 0 0 1 2-2.8Z" fill="#e0682c"/>
-        <path d="M11 24h8l-1.5 4h-5L11 24Z" fill="#b3a99c"/>
-        <rect x="19" y="8" width="9" height="4" rx="1" fill="#b3a99c"/>
+        <path d="M11 24h8l-1.5 4h-5L11 24Z" fill="#bdb3a6"/>
+        <rect x="19" y="8" width="9" height="4" rx="1" fill="#bdb3a6"/>
       </svg>
-      Ferrailles de Louis
+      <span>Ferrailles de Louis</span>
     </a>
-    <nav class="nav-links" aria-label="Navigation principale">
+    <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false"><span></span></button>
+    <nav class="nav-links" id="navLinks">
       <a href="#savoir-faire">Le savoir-faire</a>
       <a href="#creations">Les créations</a>
       <a href="#sur-mesure">Sur mesure</a>
@@ -210,13 +236,10 @@
   <div class="glow" aria-hidden="true"></div>
   <div class="wrap">
     <p class="eyebrow">Atelier de ferronnerie d'art</p>
-    <h1>Ferrailles <span class="amp">de</span> Louis</h1>
+    <h1>Ferrailles <span class="de">de</span> Louis</h1>
     <span class="hero-sig" aria-hidden="true"></span>
-    <p class="hero-lede">
-      Le fer forgé à la main, pièce par pièce. À l'atelier, la ferraille
-      récupérée reprend vie sous le marteau : portails, mobilier, luminaires
-      et objets uniques, façonnés à chaud.
-    </p>
+    <p>Le fer forgé à la main, pièce par pièce. À l'atelier, la ferraille récupérée
+       reprend vie sous le marteau : portails, mobilier, luminaires et objets uniques.</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="#creations">Voir les créations</a>
       <a class="btn btn-ghost" href="#contact">Demander un devis</a>
@@ -231,25 +254,20 @@
       <div class="about-copy reveal">
         <p class="eyebrow">Le savoir-faire</p>
         <h2>Du feu, un marteau,<br>et beaucoup de patience.</h2>
-        <p style="margin-top:26px;">
-          Louis travaille le fer à l'ancienne : chauffé à la forge, martelé sur
-          l'enclume, plié et assemblé à la main. <strong>Aucune pièce n'est
-          identique</strong> — chaque courbe garde la trace de l'outil et du geste.
-        </p>
-        <p>
-          Une bonne partie de la matière est <strong>récupérée puis remise en
-          œuvre</strong> : de la vieille ferraille qui retrouve une seconde vie,
-          transformée en objet solide et durable, fait pour traverser les années.
-        </p>
+        <p style="margin-top:24px;">Louis travaille le fer à l'ancienne : chauffé à la forge, martelé sur
+          l'enclume, plié et assemblé à la main. <strong>Aucune pièce n'est identique</strong> — chaque
+          courbe garde la trace de l'outil et du geste.</p>
+        <p>Une bonne partie de la matière est <strong>récupérée puis remise en œuvre</strong> : de la
+          vieille ferraille qui retrouve une seconde vie, transformée en objet solide et durable.</p>
         <div class="figures">
           <div class="figure"><b>100 %</b><span>fait main</span></div>
           <div class="figure"><b>Unique</b><span>chaque pièce</span></div>
-          <div class="figure"><b>Sur&nbsp;mesure</b><span>selon vos envies</span></div>
+          <div class="figure"><b>Sur mesure</b><span>vos envies</span></div>
         </div>
       </div>
-      <!-- PHOTO DE L'ATELIER : voir la notice en bas du code pour la remplacer -->
-      <figure class="about-media reveal" aria-label="Photo de l'atelier (à remplacer)">
-        <figcaption>Photo de l'atelier à ajouter ici</figcaption>
+      <!-- PHOTO ATELIER : remplacer ce <figure> par <img class="about-media" src="images/atelier.jpg" alt="Louis à la forge"> -->
+      <figure class="about-media reveal">
+        <figcaption>Photo de l'atelier à ajouter</figcaption>
       </figure>
     </div>
   </div>
@@ -260,89 +278,113 @@
   <div class="wrap">
     <div class="section-head reveal">
       <p class="eyebrow">Les créations</p>
-      <h2>Quelques pièces de l'atelier</h2>
-      <p>Chaque pièce est unique. Réservez celle qui vous plaît — elle devient alors indisponible pour les autres.</p>
+      <h2>Les pièces de l'atelier</h2>
+      <p>Chaque pièce est unique. Réservez celle qui vous plaît — elle devient aussitôt indisponible pour les autres.</p>
     </div>
 
     <!--
-      GALERIE — chaque carte = UNE pièce unique (attribut data-slug).
-      • Pour ajouter une photo : place une <img src="images/..."> juste après <span class="ph">.
-      • Pour ajouter d'autres pièces : duplique une <article> en changeant data-slug (unique),
-        data-name, le texte, et ajoute la même ligne dans la base de données (voir notice en bas).
+      Pour ajouter une photo : dans <div class="visual">, place
+      <img src="images/portail.jpg" alt="…"> juste après le <span class="ph">.
+      Pour ajouter une pièce : duplique un <article>, change data-slug (unique) et data-name,
+      puis ajoute la ligne correspondante dans la table "pieces" de Supabase.
     -->
     <div class="gallery">
-      <article class="card tall reveal" data-slug="portail" data-name="Portail forgé">
-        <span class="ph" aria-hidden="true"></span>
-        <!-- Exemple : <img src="images/portail.jpg" alt="Portail en fer forgé"> -->
-        <div class="meta">
+
+      <article class="card reveal" data-slug="portail" data-name="Portail forgé">
+        <div class="visual">
+          <span class="ph"></span>
+          <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#e0682c" stroke-width="1.2"><path d="M3 21V5m18 16V5M3 5h18M7 21V9m5 12V9m5 12V9M3 13h18"/></svg></span>
+        </div>
+        <div class="body">
           <div class="cat">Portails &amp; grilles</div>
           <div class="name">Portail forgé</div>
-          <div class="card-action">
-            <span class="badge">Réservé</span>
+          <p class="desc">Volutes et barreaux martelés, traités contre la rouille.</p>
+          <div class="foot">
             <button class="reserve-btn" type="button">Réserver</button>
+            <span class="badge">Réservé</span>
           </div>
         </div>
       </article>
 
       <article class="card reveal" data-slug="mobilier" data-name="Table &amp; consoles">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta">
+        <div class="visual">
+          <span class="ph"></span>
+          <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#e0682c" stroke-width="1.2"><path d="M2 9h20M4 9v11m16-11v11M7 9V5m10 4V5"/></svg></span>
+        </div>
+        <div class="body">
           <div class="cat">Mobilier</div>
           <div class="name">Table &amp; consoles</div>
-          <div class="card-action">
-            <span class="badge">Réservé</span>
+          <p class="desc">Piètement en fer forgé, plateau bois ou verre au choix.</p>
+          <div class="foot">
             <button class="reserve-btn" type="button">Réserver</button>
+            <span class="badge">Réservé</span>
           </div>
         </div>
       </article>
 
       <article class="card reveal" data-slug="luminaires" data-name="Lampes &amp; appliques">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta">
+        <div class="visual">
+          <span class="ph"></span>
+          <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#e0682c" stroke-width="1.2"><path d="M12 3v2m0 14v2M6 12H4m16 0h-2M8 8l7 7m-7 0 7-7"/><circle cx="12" cy="12" r="4"/></svg></span>
+        </div>
+        <div class="body">
           <div class="cat">Luminaires</div>
           <div class="name">Lampes &amp; appliques</div>
-          <div class="card-action">
-            <span class="badge">Réservé</span>
+          <p class="desc">Lumière chaude et structure ajourée, faite à la main.</p>
+          <div class="foot">
             <button class="reserve-btn" type="button">Réserver</button>
+            <span class="badge">Réservé</span>
           </div>
         </div>
       </article>
 
       <article class="card reveal" data-slug="decoration" data-name="Pièces murales">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta">
+        <div class="visual">
+          <span class="ph"></span>
+          <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#e0682c" stroke-width="1.2"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M9 20V9m6 11V9M4 9h16"/></svg></span>
+        </div>
+        <div class="body">
           <div class="cat">Décoration</div>
           <div class="name">Pièces murales</div>
-          <div class="card-action">
-            <span class="badge">Réservé</span>
+          <p class="desc">Sculptures et motifs à suspendre, intérieur ou extérieur.</p>
+          <div class="foot">
             <button class="reserve-btn" type="button">Réserver</button>
+            <span class="badge">Réservé</span>
           </div>
         </div>
       </article>
 
-      <article class="card tall reveal" data-slug="jardin" data-name="Rosiers &amp; treillages">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta">
+      <article class="card reveal" data-slug="jardin" data-name="Rosiers &amp; treillages">
+        <div class="visual">
+          <span class="ph"></span>
+          <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#e0682c" stroke-width="1.2"><path d="M12 21V9m0 0c0-3 2-5 5-5 0 3-2 5-5 5Zm0 0c0-3-2-5-5-5 0 3 2 5 5 5Z"/><path d="M6 21h12"/></svg></span>
+        </div>
+        <div class="body">
           <div class="cat">Jardin</div>
           <div class="name">Rosiers &amp; treillages</div>
-          <div class="card-action">
-            <span class="badge">Réservé</span>
+          <p class="desc">Arceaux et supports à plantes, pensés pour durer dehors.</p>
+          <div class="foot">
             <button class="reserve-btn" type="button">Réserver</button>
+            <span class="badge">Réservé</span>
           </div>
         </div>
       </article>
 
-      <!-- Carte "Sur mesure" : pas de réservation, renvoie au contact -->
       <article class="card reveal">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta">
+        <div class="visual">
+          <span class="ph"></span>
+          <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#e0682c" stroke-width="1.2"><path d="M12 5v14M5 12h14"/></svg></span>
+        </div>
+        <div class="body">
           <div class="cat">Sur mesure</div>
           <div class="name">Votre projet</div>
-          <div class="card-action">
+          <p class="desc">Une idée, un croquis, une dimension précise : Louis la forge.</p>
+          <div class="foot">
             <a class="reserve-btn" href="#contact">Commander</a>
           </div>
         </div>
       </article>
+
     </div>
   </div>
 </section>
@@ -357,18 +399,15 @@
     </div>
     <div class="steps">
       <div class="step reveal">
-        <div class="no">Étape 01</div>
-        <h3>On en parle</h3>
-        <p>Vous décrivez votre idée, vos dimensions, votre style. Un croquis et une photo suffisent pour démarrer.</p>
+        <div class="no">Étape 01</div><h3>On en parle</h3>
+        <p>Vous décrivez votre idée, vos dimensions, votre style. Un croquis et une photo suffisent.</p>
       </div>
       <div class="step reveal">
-        <div class="no">Étape 02</div>
-        <h3>Devis &amp; dessin</h3>
-        <p>Louis propose un projet chiffré, avec les matériaux, les finitions et les délais. Rien n'est lancé sans votre accord.</p>
+        <div class="no">Étape 02</div><h3>Devis &amp; dessin</h3>
+        <p>Louis propose un projet chiffré, avec matériaux, finitions et délais. Rien sans votre accord.</p>
       </div>
       <div class="step reveal">
-        <div class="no">Étape 03</div>
-        <h3>Forge &amp; pose</h3>
+        <div class="no">Étape 03</div><h3>Forge &amp; pose</h3>
         <p>La pièce est forgée à l'atelier, protégée contre la rouille, puis livrée — et posée si besoin.</p>
       </div>
     </div>
@@ -384,21 +423,17 @@
         <h2>Parlons de votre projet</h2>
         <p>Une commande, une question, une idée à concrétiser&nbsp;? Écrivez ou appelez Louis directement.</p>
         <ul class="contact-lines">
-          <li><span class="lbl">Téléphone</span>
-            <a class="val" href="tel:+33600000000">06 00 00 00 00</a></li>
-          <li><span class="lbl">E-mail</span>
-            <a class="val" href="mailto:contact@ferraillesdelouis.fr">contact@ferraillesdelouis.fr</a></li>
-          <li><span class="lbl">Atelier</span>
-            <span class="val">Votre ville, votre département</span></li>
+          <li><span class="lbl">Téléphone</span><a class="val" href="tel:+33600000000">06 00 00 00 00</a></li>
+          <li><span class="lbl">E-mail</span><a class="val" href="mailto:contact@ferraillesdelouis.fr">contact@ferraillesdelouis.fr</a></li>
+          <li><span class="lbl">Atelier</span><span class="val">Votre ville, votre département</span></li>
         </ul>
       </div>
       <aside class="contact-card reveal">
         <h3>Demander un devis</h3>
         <p>Décrivez votre projet en quelques mots — Louis vous répond avec plaisir.</p>
         <a class="btn btn-primary"
-           href="mailto:contact@ferraillesdelouis.fr?subject=Demande%20de%20devis%20—%20Ferrailles%20de%20Louis&body=Bonjour%20Louis,%0D%0A%0D%0AVoici%20mon%20projet%20:%0D%0A-%20Type%20de%20pièce%20:%0D%0A-%20Dimensions%20:%0D%0A-%20Style%20souhaité%20:%0D%0A-%20Délai%20:%0D%0A%0D%0AMerci%20!">
-          Écrire à Louis
-        </a>
+           href="mailto:contact@ferraillesdelouis.fr?subject=Demande%20de%20devis%20—%20Ferrailles%20de%20Louis&body=Bonjour%20Louis,%0D%0A%0D%0AVoici%20mon%20projet%20:%0D%0A-%20Type%20de%20pièce%20:%0D%0A-%20Dimensions%20:%0D%0A-%20Style%20:%0D%0A%0D%0AMerci%20!">
+          Écrire à Louis</a>
       </aside>
     </div>
   </div>
@@ -406,7 +441,6 @@
 
 <hr class="temper-rule">
 
-<!-- FOOTER -->
 <footer>
   <div class="wrap foot-inner">
     <p class="foot-brand">Ferrailles de Louis</p>
@@ -414,198 +448,143 @@
   </div>
 </footer>
 
-<!-- MODALE DE RÉSERVATION -->
+<!-- MODALE -->
 <div class="modal" id="reserveModal" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
   <div class="modal-box">
     <h3 id="rmTitle">Réserver une pièce</h3>
     <p class="sub">Pièce : <b id="rmPiece">—</b></p>
-    <div class="field"><label for="rmName">Votre nom</label>
-      <input id="rmName" type="text" autocomplete="name"></div>
-    <div class="field"><label for="rmContact">E-mail ou téléphone</label>
-      <input id="rmContact" type="text" autocomplete="email"></div>
-    <div class="field"><label for="rmMsg">Message (facultatif)</label>
-      <textarea id="rmMsg"></textarea></div>
+    <div class="field"><label for="rmName">Votre nom</label><input id="rmName" type="text" autocomplete="name"></div>
+    <div class="field"><label for="rmContact">E-mail ou téléphone</label><input id="rmContact" type="text" autocomplete="email"></div>
+    <div class="field"><label for="rmMsg">Message (facultatif)</label><textarea id="rmMsg"></textarea></div>
     <div class="form-msg" id="rmOut" role="status" aria-live="polite"></div>
     <div class="modal-actions">
       <button type="button" class="btn-cancel" id="rmCancel">Annuler</button>
-      <button type="button" class="btn-send" id="rmSend">Confirmer la réservation</button>
+      <button type="button" class="btn-send" id="rmSend">Confirmer</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ============================================================
-   RÉGLAGES — À COMPLÉTER (voir la notice en chat / en bas du code)
-   ============================================================ */
+/* ===== RÉGLAGES ===== */
 const CONFIG = {
-  // 1) Base de données partagée Supabase (obligatoire pour le blocage automatique)
   SUPABASE_URL:      "https://ficpgpduwkgdqcfgjtdi.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk",
-
-  // 2) Notification e-mail à Louis (facultatif — endpoint Formspree). Laisser vide si non utilisé.
-  FORMSPREE_ENDPOINT: "",
-
-  // 3) E-mail de secours : utilisé si la base n'est pas encore configurée
-  EMAIL_LOUIS: "contact@ferraillesdelouis.fr"
+  FORMSPREE_ENDPOINT: "",                       // facultatif : e-mail auto à Louis
+  EMAIL_LOUIS: "contact@ferraillesdelouis.fr"   // secours si la base est absente
 };
-
-/* ============================================================ */
+/* ==================== */
 
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// Menu mobile
+const burger = document.getElementById('burger');
+const navLinks = document.getElementById('navLinks');
+burger.addEventListener('click', function(){
+  const open = navLinks.classList.toggle('open');
+  burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+navLinks.querySelectorAll('a').forEach(function(a){
+  a.addEventListener('click', function(){ navLinks.classList.remove('open'); burger.setAttribute('aria-expanded','false'); });
+});
 
 // Révélation au défilement
 (function(){
   var els = document.querySelectorAll('.reveal');
   if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
-  }, { threshold:.14 });
+  var io = new IntersectionObserver(function(en){
+    en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:.12 });
   els.forEach(function(e){ io.observe(e); });
 })();
 
-// La base est-elle configurée ?
-const CONFIGURED =
-  CONFIG.SUPABASE_URL && CONFIG.SUPABASE_URL.indexOf('VOTRE-') === -1 &&
-  CONFIG.SUPABASE_ANON_KEY && CONFIG.SUPABASE_ANON_KEY.indexOf('VOTRE-') === -1 &&
-  window.supabase;
+// Base de données
+const CONFIGURED = CONFIG.SUPABASE_URL.indexOf('VOTRE-') === -1
+  && CONFIG.SUPABASE_ANON_KEY.indexOf('VOTRE-') === -1 && window.supabase;
+let sb = CONFIGURED ? window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY) : null;
 
-let sb = null;
-if (CONFIGURED) { sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY); }
-
-// Utilitaires
-function cardBySlug(slug){ return document.querySelector('.card[data-slug="'+slug+'"]'); }
-function markReserved(slug){
-  const c = cardBySlug(slug);
-  if(!c) return;
+function cardBySlug(s){ return document.querySelector('.card[data-slug="'+s+'"]'); }
+function markReserved(s){
+  const c = cardBySlug(s); if(!c) return;
   c.classList.add('is-reserved');
-  const b = c.querySelector('.reserve-btn'); if(b){ b.disabled = true; }
+  const b = c.querySelector('.reserve-btn'); if(b) b.disabled = true;
 }
 
-// Charger l'état des pièces au démarrage
-async function loadStatuses(){
+(async function loadStatuses(){
   if(!sb) return;
   try{
     const { data, error } = await sb.from('pieces').select('slug,reserved');
-    if(error){ console.warn('Lecture pieces:', error.message); return; }
+    if(error) return console.warn(error.message);
     (data||[]).forEach(function(p){ if(p.reserved) markReserved(p.slug); });
   }catch(e){ console.warn(e); }
-}
-loadStatuses();
+})();
 
-// Mise à jour en direct (si la fonctionnalité Realtime est activée sur la table)
 if(sb){
-  sb.channel('pieces-rt')
-    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'pieces' }, function(payload){
-      if(payload.new && payload.new.reserved){ markReserved(payload.new.slug); }
-    })
-    .subscribe();
+  sb.channel('pieces-rt').on('postgres_changes',
+    { event:'UPDATE', schema:'public', table:'pieces' },
+    function(p){ if(p.new && p.new.reserved) markReserved(p.new.slug); }).subscribe();
 }
 
-// ---- Modale ----
-const modal   = document.getElementById('reserveModal');
-const rmPiece = document.getElementById('rmPiece');
-const rmName  = document.getElementById('rmName');
-const rmContact = document.getElementById('rmContact');
-const rmMsg   = document.getElementById('rmMsg');
-const rmOut   = document.getElementById('rmOut');
-const rmSend  = document.getElementById('rmSend');
-let currentSlug = null, currentName = null;
+// Modale
+const modal = document.getElementById('reserveModal');
+const rmPiece = document.getElementById('rmPiece'), rmName = document.getElementById('rmName');
+const rmContact = document.getElementById('rmContact'), rmMsg = document.getElementById('rmMsg');
+const rmOut = document.getElementById('rmOut'), rmSend = document.getElementById('rmSend');
+let curSlug = null, curName = null;
 
-function openModal(slug, name){
-  currentSlug = slug; currentName = name;
-  rmPiece.textContent = name;
-  rmName.value = ''; rmContact.value = ''; rmMsg.value = '';
-  rmOut.textContent = ''; rmOut.className = 'form-msg';
-  rmSend.disabled = false;
-  modal.classList.add('open');
-  setTimeout(function(){ rmName.focus(); }, 40);
-}
 function closeModal(){ modal.classList.remove('open'); }
-
 document.getElementById('rmCancel').addEventListener('click', closeModal);
 modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
-document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
 
-// Secours e-mail si la base n'est pas configurée
 function mailtoFallback(name){
-  const sujet = encodeURIComponent('Réservation — ' + name);
-  const corps = encodeURIComponent(
-    'Bonjour Louis,\n\nJe souhaite réserver cette pièce : ' + name +
-    '.\n\nMon nom :\nMon e-mail ou téléphone :\n\nMerci !');
-  window.location.href = 'mailto:' + CONFIG.EMAIL_LOUIS + '?subject=' + sujet + '&body=' + corps;
+  const s = encodeURIComponent('Réservation — ' + name);
+  const b = encodeURIComponent('Bonjour Louis,\n\nJe souhaite réserver : ' + name + '.\n\nMon nom :\nMon contact :\n\nMerci !');
+  window.location.href = 'mailto:' + CONFIG.EMAIL_LOUIS + '?subject=' + s + '&body=' + b;
 }
 
-// Brancher les boutons "Réserver"
 document.querySelectorAll('.card[data-slug] .reserve-btn').forEach(function(btn){
   btn.addEventListener('click', function(){
     const card = btn.closest('.card');
-    const slug = card.getAttribute('data-slug');
-    const name = (card.getAttribute('data-name') || '').replace('&amp;','&');
-    if(!sb){ mailtoFallback(name); return; }   // pas de base → e-mail
-    openModal(slug, name);
+    curSlug = card.getAttribute('data-slug');
+    curName = (card.getAttribute('data-name')||'').replace('&amp;','&');
+    if(!sb){ mailtoFallback(curName); return; }
+    rmPiece.textContent = curName;
+    rmName.value = rmContact.value = rmMsg.value = '';
+    rmOut.textContent = ''; rmOut.className = 'form-msg'; rmSend.disabled = false;
+    modal.classList.add('open');
+    setTimeout(function(){ rmName.focus(); }, 40);
   });
 });
 
-// Envoi de la réservation
 rmSend.addEventListener('click', async function(){
-  const nom = rmName.value.trim();
-  const contact = rmContact.value.trim();
-  const message = rmMsg.value.trim();
+  const nom = rmName.value.trim(), contact = rmContact.value.trim(), message = rmMsg.value.trim();
   if(!nom || !contact){
     rmOut.className = 'form-msg error';
     rmOut.textContent = 'Merci d\'indiquer votre nom et un moyen de vous joindre.';
     return;
   }
-  rmSend.disabled = true;
-  rmOut.className = 'form-msg';
-  rmOut.textContent = 'Envoi en cours…';
+  rmSend.disabled = true; rmOut.className = 'form-msg'; rmOut.textContent = 'Envoi en cours…';
   try{
-    // 1) Enregistrer la réservation (privé — visible par Louis dans son tableau de bord)
-    const ins = await sb.from('reservations').insert({
-      piece_slug: currentSlug, name: nom, contact: contact, message: message
-    });
+    const ins = await sb.from('reservations').insert({ piece_slug:curSlug, name:nom, contact:contact, message:message });
     if(ins.error) throw ins.error;
-
-    // 2) Bloquer la pièce pour tout le monde
-    const upd = await sb.from('pieces').update({ reserved:true }).eq('slug', currentSlug);
+    const upd = await sb.from('pieces').update({ reserved:true }).eq('slug', curSlug);
     if(upd.error) throw upd.error;
-
-    // 3) Notifier Louis par e-mail (facultatif)
     if(CONFIG.FORMSPREE_ENDPOINT){
-      fetch(CONFIG.FORMSPREE_ENDPOINT, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
-        body: JSON.stringify({ piece: currentName, nom: nom, contact: contact, message: message })
-      }).catch(function(){});
+      fetch(CONFIG.FORMSPREE_ENDPOINT, { method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify({ piece:curName, nom:nom, contact:contact, message:message }) }).catch(function(){});
     }
-
-    markReserved(currentSlug);
+    markReserved(curSlug);
     rmOut.className = 'form-msg ok';
-    rmOut.textContent = 'Réservation enregistrée ✓ Louis vous recontacte très vite.';
+    rmOut.textContent = 'Réservation enregistrée ✓ Louis vous recontacte vite.';
     setTimeout(closeModal, 1600);
   }catch(err){
-    console.warn(err);
-    rmSend.disabled = false;
+    console.warn(err); rmSend.disabled = false;
     rmOut.className = 'form-msg error';
-    rmOut.textContent = 'Oups, l\'envoi a échoué. Réessayez, ou contactez Louis directement.';
+    rmOut.textContent = 'L\'envoi a échoué. Réessayez ou contactez Louis directement.';
   }
 });
 </script>
-
-<!--
-  ============================================================
-  NOTICE — PERSONNALISATION (à lire, puis tu peux l'effacer)
-  ============================================================
-
-  A) COORDONNÉES  → section CONTACT + variable EMAIL_LOUIS dans les RÉGLAGES.
-  B) PHOTOS        → dossier "images" + balise <img> dans les cartes / l'atelier.
-  C) RÉSERVATIONS  → renseigner SUPABASE_URL et SUPABASE_ANON_KEY dans les RÉGLAGES
-                     (le pas-à-pas de création de la base est expliqué à part).
-  D) E-MAIL AUTO   → (facultatif) coller un endpoint Formspree dans FORMSPREE_ENDPOINT.
-
-  Tant que la base n'est pas configurée, le bouton "Réserver" ouvre un e-mail pré-rempli :
-  le site reste utilisable dès maintenant.
--->
 
 </body>
 </html>
