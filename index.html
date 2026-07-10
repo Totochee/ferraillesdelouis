@@ -4,132 +4,77 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ferrailles de Louis — Ferronnerie d'art & fer forgé à la main</title>
-<meta name="description" content="Ferrailles de Louis : créations en fer forgé à la main. Portails, mobilier, luminaires et décoration. Pièces uniques et travail sur mesure.">
+<meta name="description" content="Ferrailles de Louis : créations en fer forgé à la main. Portails, mobilier, luminaires et décoration. Pièces uniques, réservation en ligne.">
 
 <!-- Polices -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,800;1,9..144,400&family=Karla:wght@300;400;500;700&display=swap" rel="stylesheet">
 
+<!-- Base de données partagée (pour les réservations) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
   :root{
-    /* Palette forge */
-    --forge:      #14100d;  /* fond, noir suie chaud */
-    --forge-deep: #0d0a08;
-    --iron:       #221d19;  /* panneaux / cartes */
-    --iron-light: #342d27;
-    --ash:        #b3a99c;  /* texte courant */
-    --bone:       #ede6da;  /* titres, texte clair */
-    --ember:      #e0682c;  /* métal chaud, accent */
-    --ember-deep: #9e2b0e;
-
-    /* Couleurs de revenu de l'acier — l'élément signature */
-    --temper: linear-gradient(90deg,
-      #e3b23c 0%,   /* paille */
-      #b5651d 24%,  /* bronze */
-      #7a3b69 48%,  /* violet */
-      #2e6e7e 74%,  /* paon */
-      #2c4a7a 100%  /* bleu acier */
-    );
-
-    --maxw: 1160px;
-    --ease: cubic-bezier(.2,.7,.2,1);
+    --forge:#14100d; --forge-deep:#0d0a08; --iron:#221d19; --iron-light:#342d27;
+    --ash:#b3a99c; --bone:#ede6da; --ember:#e0682c; --ember-deep:#9e2b0e;
+    --temper:linear-gradient(90deg,#e3b23c 0%,#b5651d 24%,#7a3b69 48%,#2e6e7e 74%,#2c4a7a 100%);
+    --maxw:1160px; --ease:cubic-bezier(.2,.7,.2,1);
   }
-
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
-
-  body{
-    margin:0;
-    background:var(--forge);
-    color:var(--ash);
-    font-family:"Karla", system-ui, sans-serif;
-    font-size:18px;
-    line-height:1.65;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-
-  h1,h2,h3{
-    font-family:"Fraunces", Georgia, serif;
-    color:var(--bone);
-    font-weight:600;
-    line-height:1.06;
-    margin:0;
-  }
-
+  body{ margin:0; background:var(--forge); color:var(--ash); font-family:"Karla",system-ui,sans-serif;
+    font-size:18px; line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:"Fraunces",Georgia,serif; color:var(--bone); font-weight:600; line-height:1.06; margin:0; }
   a{ color:inherit; }
   img{ display:block; max-width:100%; }
-
   .wrap{ width:100%; max-width:var(--maxw); margin:0 auto; padding:0 clamp(20px,5vw,40px); }
-
-  .eyebrow{
-    font-family:"Karla", sans-serif;
-    text-transform:uppercase;
-    letter-spacing:.28em;
-    font-size:12.5px;
-    font-weight:700;
-    color:var(--ember);
-    margin:0 0 18px;
-  }
-
-  /* Filet couleurs de revenu — signature réutilisée partout */
+  .eyebrow{ font-family:"Karla",sans-serif; text-transform:uppercase; letter-spacing:.28em; font-size:12.5px;
+    font-weight:700; color:var(--ember); margin:0 0 18px; }
   .temper-rule{ height:3px; width:100%; background:var(--temper); border:0; margin:0; opacity:.9; }
 
-  /* ---------- Barre de nav ---------- */
-  header.nav{
-    position:sticky; top:0; z-index:50;
-    background:color-mix(in srgb, var(--forge) 82%, transparent);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid #ffffff10;
-  }
+  /* NAV */
+  header.nav{ position:sticky; top:0; z-index:50; background:color-mix(in srgb,var(--forge) 82%,transparent);
+    backdrop-filter:blur(10px); border-bottom:1px solid #ffffff10; }
   .nav-inner{ display:flex; align-items:center; justify-content:space-between; height:70px; }
-  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:20px; color:var(--bone); letter-spacing:.01em; text-decoration:none; display:flex; align-items:center; gap:12px; }
+  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:20px; color:var(--bone); text-decoration:none;
+    display:flex; align-items:center; gap:12px; }
   .brand .mark{ width:26px; height:26px; flex:none; }
   .nav-links{ display:flex; gap:30px; align-items:center; }
   .nav-links a{ text-decoration:none; font-size:15px; font-weight:500; color:var(--ash); transition:color .2s; }
   .nav-links a:hover{ color:var(--bone); }
   .nav-cta{ text-decoration:none; font-size:14px; font-weight:700; color:var(--forge); background:var(--ember);
-    padding:10px 18px; border-radius:2px; transition:transform .2s var(--ease), background .2s; }
+    padding:10px 18px; border-radius:2px; transition:transform .2s var(--ease),background .2s; }
   .nav-cta:hover{ background:#f0813f; transform:translateY(-1px); }
   @media(max-width:720px){ .nav-links a:not(.nav-cta){ display:none; } }
 
-  /* ---------- Hero ---------- */
+  /* HERO */
   .hero{ position:relative; padding:clamp(90px,16vh,180px) 0 clamp(70px,10vh,120px); overflow:hidden; }
-  .glow{
-    position:absolute; inset:0; z-index:0; pointer-events:none;
-    background:
-      radial-gradient(60% 55% at 78% 30%, #e0682c33 0%, transparent 60%),
-      radial-gradient(45% 40% at 90% 20%, #9e2b0e40 0%, transparent 65%);
-    animation:flicker 7s ease-in-out infinite;
-  }
-  @keyframes flicker{
-    0%,100%{ opacity:.85; } 40%{ opacity:1; } 55%{ opacity:.78; } 70%{ opacity:.95; }
-  }
+  .glow{ position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(60% 55% at 78% 30%,#e0682c33 0%,transparent 60%),
+               radial-gradient(45% 40% at 90% 20%,#9e2b0e40 0%,transparent 65%);
+    animation:flicker 7s ease-in-out infinite; }
+  @keyframes flicker{ 0%,100%{opacity:.85;} 40%{opacity:1;} 55%{opacity:.78;} 70%{opacity:.95;} }
   .hero .wrap{ position:relative; z-index:1; }
-  .hero h1{
-    font-size:clamp(52px, 11vw, 132px);
-    font-weight:600;
-    letter-spacing:-.02em;
-    margin:0 0 4px;
-  }
+  .hero h1{ font-size:clamp(52px,11vw,132px); letter-spacing:-.02em; margin:0 0 4px; }
   .hero h1 .amp{ font-style:italic; font-weight:400; color:var(--ember); }
   .hero-lede{ max-width:560px; font-size:clamp(18px,2.4vw,22px); color:#cfc6ba; margin:26px 0 0; }
   .hero-sig{ display:block; width:min(420px,80%); height:3px; background:var(--temper); margin:34px 0 40px; border-radius:2px; }
   .hero-actions{ display:flex; flex-wrap:wrap; gap:16px; }
-  .btn{ text-decoration:none; font-weight:700; font-size:15px; padding:15px 26px; border-radius:2px; transition:transform .2s var(--ease), background .2s, border-color .2s; }
+  .btn{ text-decoration:none; font-weight:700; font-size:15px; padding:15px 26px; border-radius:2px;
+    transition:transform .2s var(--ease),background .2s,border-color .2s; }
   .btn-primary{ background:var(--ember); color:var(--forge); }
   .btn-primary:hover{ background:#f0813f; transform:translateY(-2px); }
   .btn-ghost{ background:transparent; color:var(--bone); border:1px solid #ffffff2e; }
   .btn-ghost:hover{ border-color:var(--ember); color:var(--ember); transform:translateY(-2px); }
 
-  /* ---------- Sections ---------- */
+  /* SECTIONS */
   .section{ padding:clamp(70px,11vh,120px) 0; }
   .section-head{ max-width:640px; margin-bottom:52px; }
   .section-head h2{ font-size:clamp(32px,5vw,52px); letter-spacing:-.015em; }
   .section-head p{ margin:20px 0 0; color:var(--ash); font-size:19px; }
 
-  /* Savoir-faire */
+  /* SAVOIR-FAIRE */
   .about{ background:var(--forge-deep); border-top:1px solid #ffffff0d; border-bottom:1px solid #ffffff0d; }
   .about-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(30px,6vw,80px); align-items:center; }
   .about-copy p{ margin:0 0 18px; }
@@ -139,40 +84,45 @@
   .figure{ background:var(--iron); border:1px solid #ffffff10; padding:20px 22px; border-radius:3px; flex:1; min-width:130px; }
   .figure b{ display:block; font-family:"Fraunces",serif; font-size:30px; color:var(--ember); line-height:1; }
   .figure span{ font-size:14px; }
-  /* Portrait de l'atelier (placeholder texturé — remplaçable par une photo) */
-  .about-media{ position:relative; aspect-ratio:4/5; border-radius:4px; overflow:hidden;
-    border:1px solid #ffffff14;
-    background:
-      linear-gradient(145deg, #2b2620, #17130f 70%),
-      repeating-linear-gradient(115deg, #ffffff05 0 2px, transparent 2px 9px);
+  .about-media{ position:relative; aspect-ratio:4/5; border-radius:4px; overflow:hidden; border:1px solid #ffffff14;
+    background:linear-gradient(145deg,#2b2620,#17130f 70%),
+      repeating-linear-gradient(115deg,#ffffff05 0 2px,transparent 2px 9px);
     display:flex; align-items:flex-end; }
   .about-media::before{ content:""; position:absolute; inset:0;
-    background:radial-gradient(50% 40% at 70% 25%, #e0682c30, transparent 70%); }
-  .about-media figcaption{ position:relative; padding:22px; font-size:13px; color:#8b8177;
-    letter-spacing:.04em; text-transform:uppercase; }
+    background:radial-gradient(50% 40% at 70% 25%,#e0682c30,transparent 70%); }
+  .about-media figcaption{ position:relative; padding:22px; font-size:13px; color:#8b8177; letter-spacing:.04em; text-transform:uppercase; }
 
-  /* ---------- Galerie créations ---------- */
+  /* GALERIE */
   .gallery{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
-  .card{ position:relative; border-radius:4px; overflow:hidden; background:var(--iron);
-    border:1px solid #ffffff10; aspect-ratio:1/1;
-    transition:transform .3s var(--ease), border-color .3s; }
+  .card{ position:relative; border-radius:4px; overflow:hidden; background:var(--iron); border:1px solid #ffffff10;
+    aspect-ratio:1/1; transition:transform .3s var(--ease),border-color .3s; }
   .card.tall{ aspect-ratio:1/1.3; }
   .card:hover{ transform:translateY(-4px); border-color:#ffffff26; }
-  /* Fond « métal martelé » du placeholder — masqué dès qu'une <img> est ajoutée */
   .card .ph{ position:absolute; inset:0;
-    background:
-      radial-gradient(60% 50% at 30% 20%, #ffffff0a, transparent 60%),
-      repeating-linear-gradient(48deg, #ffffff06 0 3px, transparent 3px 11px),
-      linear-gradient(160deg, #322b25, #191410); }
+    background:radial-gradient(60% 50% at 30% 20%,#ffffff0a,transparent 60%),
+      repeating-linear-gradient(48deg,#ffffff06 0 3px,transparent 3px 11px),
+      linear-gradient(160deg,#322b25,#191410); }
   .card img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-  .card .meta{ position:absolute; left:0; right:0; bottom:0; z-index:2;
-    padding:20px; background:linear-gradient(transparent, #0b0806e0 78%); }
+  .card .meta{ position:absolute; left:0; right:0; bottom:0; z-index:3;
+    padding:20px; background:linear-gradient(transparent,#0b0806e0 78%); }
   .card .cat{ font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--ember); font-weight:700; }
   .card .name{ font-family:"Fraunces",serif; color:var(--bone); font-size:22px; margin-top:5px; }
+  .card-action{ display:flex; align-items:center; gap:10px; margin-top:14px; }
+  .reserve-btn{ font-family:"Karla",sans-serif; font-weight:700; font-size:13px; letter-spacing:.02em;
+    color:var(--forge); background:var(--ember); border:0; border-radius:2px; padding:9px 16px; cursor:pointer;
+    text-decoration:none; display:inline-block; transition:background .2s,transform .2s; }
+  .reserve-btn:hover{ background:#f0813f; transform:translateY(-1px); }
+  .reserve-btn:disabled{ background:#3a332d; color:#8b8177; cursor:not-allowed; transform:none; }
+  .badge{ display:none; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+    color:#0e0b08; background:var(--ash); padding:6px 11px; border-radius:2px; }
+  .card.is-reserved::after{ content:""; position:absolute; inset:0; background:#0b0806b0; z-index:2; }
+  .card.is-reserved .badge{ display:inline-block; }
+  .card.is-reserved .reserve-btn{ display:none; }
+  .card.is-reserved .ph, .card.is-reserved img{ filter:grayscale(.6) brightness(.5); }
   @media(max-width:860px){ .gallery{ grid-template-columns:repeat(2,1fr); } .card.tall{ aspect-ratio:1/1; } }
   @media(max-width:520px){ .gallery{ grid-template-columns:1fr; } }
 
-  /* ---------- Sur mesure ---------- */
+  /* SUR MESURE */
   .commande{ background:var(--forge-deep); border-top:1px solid #ffffff0d; }
   .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:44px; }
   .step{ border-top:1px solid #ffffff18; padding-top:22px; }
@@ -181,7 +131,7 @@
   .step p{ margin:0; font-size:16px; }
   @media(max-width:720px){ .steps{ grid-template-columns:1fr; } }
 
-  /* ---------- Contact ---------- */
+  /* CONTACT */
   .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(30px,6vw,70px); align-items:start; }
   .contact-copy h2{ font-size:clamp(32px,5vw,52px); }
   .contact-copy p{ margin:20px 0 0; }
@@ -194,34 +144,51 @@
   .contact-card{ background:var(--iron); border:1px solid #ffffff12; border-radius:5px; padding:34px; }
   .contact-card h3{ font-size:26px; margin-bottom:8px; }
   .contact-card p{ margin:0 0 26px; font-size:16px; }
-  .contact-card .btn-primary{ display:inline-block; }
   @media(max-width:720px){ .contact-grid{ grid-template-columns:1fr; } }
 
-  /* ---------- Footer ---------- */
+  /* FOOTER */
   footer{ border-top:1px solid #ffffff12; padding:44px 0; }
   .foot-inner{ display:flex; flex-wrap:wrap; gap:16px; justify-content:space-between; align-items:center; }
   .foot-inner p{ margin:0; font-size:14px; color:#8b8177; }
   .foot-brand{ font-family:"Fraunces",serif; color:var(--bone); font-size:18px; }
 
-  /* Révélation au défilement */
-  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+  /* MODALE DE RÉSERVATION */
+  .modal{ position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center;
+    padding:20px; background:#080604aa; backdrop-filter:blur(4px); }
+  .modal.open{ display:flex; }
+  .modal-box{ width:100%; max-width:460px; background:var(--iron); border:1px solid #ffffff1a; border-radius:6px; padding:30px; }
+  .modal-box h3{ font-size:26px; margin:0 0 4px; }
+  .modal-box .sub{ font-size:14px; color:var(--ash); margin:0 0 22px; }
+  .modal-box .sub b{ color:var(--ember); }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#8b8177; margin-bottom:7px; }
+  .field input, .field textarea{ width:100%; background:var(--forge); border:1px solid #ffffff1f; border-radius:3px;
+    color:var(--bone); font-family:"Karla",sans-serif; font-size:16px; padding:12px 14px; }
+  .field textarea{ min-height:80px; resize:vertical; }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--ember); }
+  .modal-actions{ display:flex; gap:12px; margin-top:24px; }
+  .modal-actions button{ flex:1; font-family:"Karla",sans-serif; font-weight:700; font-size:14px; padding:13px;
+    border-radius:3px; cursor:pointer; border:0; }
+  .btn-cancel{ background:transparent; color:var(--ash); border:1px solid #ffffff24; }
+  .btn-send{ background:var(--ember); color:var(--forge); }
+  .btn-send:disabled{ opacity:.6; cursor:not-allowed; }
+  .form-msg{ font-size:14px; margin-top:14px; min-height:1.2em; }
+  .form-msg.error{ color:#f0813f; }
+  .form-msg.ok{ color:#7fd18a; }
+
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s var(--ease),transform .7s var(--ease); }
   .reveal.in{ opacity:1; transform:none; }
-
   :focus-visible{ outline:2px solid var(--ember); outline-offset:3px; border-radius:2px; }
-
-  @media(prefers-reduced-motion:reduce){
-    *{ animation:none !important; scroll-behavior:auto; }
-    .reveal{ opacity:1; transform:none; transition:none; }
-  }
+  @media(prefers-reduced-motion:reduce){ *{ animation:none !important; scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; } }
 </style>
 </head>
 <body>
 
-<!-- ======================= NAV ======================= -->
+<!-- NAV -->
 <header class="nav">
   <div class="wrap nav-inner">
     <a class="brand" href="#top" aria-label="Ferrailles de Louis, accueil">
-      <!-- Petit logo : enclume stylisée -->
       <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
         <path d="M4 12h18l-3 5h-8l-2 3H5a3 3 0 0 1-3-3v-2a3 3 0 0 1 2-2.8Z" fill="#e0682c"/>
         <path d="M11 24h8l-1.5 4h-5L11 24Z" fill="#b3a99c"/>
@@ -238,7 +205,7 @@
   </div>
 </header>
 
-<!-- ======================= HERO ======================= -->
+<!-- HERO -->
 <section class="hero" id="top">
   <div class="glow" aria-hidden="true"></div>
   <div class="wrap">
@@ -257,7 +224,7 @@
   </div>
 </section>
 
-<!-- ======================= SAVOIR-FAIRE ======================= -->
+<!-- SAVOIR-FAIRE -->
 <section class="section about" id="savoir-faire">
   <div class="wrap">
     <div class="about-grid">
@@ -280,8 +247,7 @@
           <div class="figure"><b>Sur&nbsp;mesure</b><span>selon vos envies</span></div>
         </div>
       </div>
-
-      <!-- PHOTO DE L'ATELIER : remplace ce bloc par une vraie photo (voir notice en bas du code) -->
+      <!-- PHOTO DE L'ATELIER : voir la notice en bas du code pour la remplacer -->
       <figure class="about-media reveal" aria-label="Photo de l'atelier (à remplacer)">
         <figcaption>Photo de l'atelier à ajouter ici</figcaption>
       </figure>
@@ -289,56 +255,99 @@
   </div>
 </section>
 
-<!-- ======================= CRÉATIONS ======================= -->
+<!-- CRÉATIONS -->
 <section class="section" id="creations">
   <div class="wrap">
     <div class="section-head reveal">
       <p class="eyebrow">Les créations</p>
       <h2>Quelques pièces de l'atelier</h2>
-      <p>Un aperçu de ce que Louis réalise. Une idée en tête&nbsp;? Il la forge sur mesure.</p>
+      <p>Chaque pièce est unique. Réservez celle qui vous plaît — elle devient alors indisponible pour les autres.</p>
     </div>
 
     <!--
-      GALERIE : chaque carte affiche un fond « métal martelé » tant qu'il n'y a pas de photo.
-      Pour mettre une vraie photo, ajoute une balise <img ...> JUSTE APRÈS le <span class="ph">
-      (garde le reste). Exemple fourni dans la 1re carte ci-dessous, en commentaire.
+      GALERIE — chaque carte = UNE pièce unique (attribut data-slug).
+      • Pour ajouter une photo : place une <img src="images/..."> juste après <span class="ph">.
+      • Pour ajouter d'autres pièces : duplique une <article> en changeant data-slug (unique),
+        data-name, le texte, et ajoute la même ligne dans la base de données (voir notice en bas).
     -->
     <div class="gallery">
-      <article class="card tall reveal">
+      <article class="card tall reveal" data-slug="portail" data-name="Portail forgé">
         <span class="ph" aria-hidden="true"></span>
-        <!-- Exemple photo : <img src="images/portail.jpg" alt="Portail en fer forgé"> -->
-        <div class="meta"><div class="cat">Portails & grilles</div><div class="name">Portail forgé</div></div>
+        <!-- Exemple : <img src="images/portail.jpg" alt="Portail en fer forgé"> -->
+        <div class="meta">
+          <div class="cat">Portails &amp; grilles</div>
+          <div class="name">Portail forgé</div>
+          <div class="card-action">
+            <span class="badge">Réservé</span>
+            <button class="reserve-btn" type="button">Réserver</button>
+          </div>
+        </div>
       </article>
 
+      <article class="card reveal" data-slug="mobilier" data-name="Table &amp; consoles">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta">
+          <div class="cat">Mobilier</div>
+          <div class="name">Table &amp; consoles</div>
+          <div class="card-action">
+            <span class="badge">Réservé</span>
+            <button class="reserve-btn" type="button">Réserver</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card reveal" data-slug="luminaires" data-name="Lampes &amp; appliques">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta">
+          <div class="cat">Luminaires</div>
+          <div class="name">Lampes &amp; appliques</div>
+          <div class="card-action">
+            <span class="badge">Réservé</span>
+            <button class="reserve-btn" type="button">Réserver</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card reveal" data-slug="decoration" data-name="Pièces murales">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta">
+          <div class="cat">Décoration</div>
+          <div class="name">Pièces murales</div>
+          <div class="card-action">
+            <span class="badge">Réservé</span>
+            <button class="reserve-btn" type="button">Réserver</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card tall reveal" data-slug="jardin" data-name="Rosiers &amp; treillages">
+        <span class="ph" aria-hidden="true"></span>
+        <div class="meta">
+          <div class="cat">Jardin</div>
+          <div class="name">Rosiers &amp; treillages</div>
+          <div class="card-action">
+            <span class="badge">Réservé</span>
+            <button class="reserve-btn" type="button">Réserver</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Carte "Sur mesure" : pas de réservation, renvoie au contact -->
       <article class="card reveal">
         <span class="ph" aria-hidden="true"></span>
-        <div class="meta"><div class="cat">Mobilier</div><div class="name">Table & consoles</div></div>
-      </article>
-
-      <article class="card reveal">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta"><div class="cat">Luminaires</div><div class="name">Lampes & appliques</div></div>
-      </article>
-
-      <article class="card reveal">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta"><div class="cat">Décoration</div><div class="name">Pièces murales</div></div>
-      </article>
-
-      <article class="card tall reveal">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta"><div class="cat">Jardin</div><div class="name">Rosiers & treillages</div></div>
-      </article>
-
-      <article class="card reveal">
-        <span class="ph" aria-hidden="true"></span>
-        <div class="meta"><div class="cat">Sur mesure</div><div class="name">Votre projet</div></div>
+        <div class="meta">
+          <div class="cat">Sur mesure</div>
+          <div class="name">Votre projet</div>
+          <div class="card-action">
+            <a class="reserve-btn" href="#contact">Commander</a>
+          </div>
+        </div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ======================= SUR MESURE ======================= -->
+<!-- SUR MESURE -->
 <section class="section commande" id="sur-mesure">
   <div class="wrap">
     <div class="section-head reveal">
@@ -354,19 +363,19 @@
       </div>
       <div class="step reveal">
         <div class="no">Étape 02</div>
-        <h3>Devis & dessin</h3>
+        <h3>Devis &amp; dessin</h3>
         <p>Louis propose un projet chiffré, avec les matériaux, les finitions et les délais. Rien n'est lancé sans votre accord.</p>
       </div>
       <div class="step reveal">
         <div class="no">Étape 03</div>
-        <h3>Forge & pose</h3>
+        <h3>Forge &amp; pose</h3>
         <p>La pièce est forgée à l'atelier, protégée contre la rouille, puis livrée — et posée si besoin.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================= CONTACT ======================= -->
+<!-- CONTACT -->
 <section class="section" id="contact">
   <div class="wrap">
     <div class="contact-grid">
@@ -374,30 +383,18 @@
         <p class="eyebrow">Contact</p>
         <h2>Parlons de votre projet</h2>
         <p>Une commande, une question, une idée à concrétiser&nbsp;? Écrivez ou appelez Louis directement.</p>
-
         <ul class="contact-lines">
-          <li>
-            <span class="lbl">Téléphone</span>
-            <!-- ⬇︎ Remplace le numéro (2 endroits : href et texte) -->
-            <a class="val" href="tel:+33600000000">06 00 00 00 00</a>
-          </li>
-          <li>
-            <span class="lbl">E-mail</span>
-            <!-- ⬇︎ Remplace l'adresse (2 endroits) -->
-            <a class="val" href="mailto:contact@ferraillesdelouis.fr">contact@ferraillesdelouis.fr</a>
-          </li>
-          <li>
-            <span class="lbl">Atelier</span>
-            <!-- ⬇︎ Remplace par la ville / le département -->
-            <span class="val">Votre ville, votre département</span>
-          </li>
+          <li><span class="lbl">Téléphone</span>
+            <a class="val" href="tel:+33600000000">06 00 00 00 00</a></li>
+          <li><span class="lbl">E-mail</span>
+            <a class="val" href="mailto:contact@ferraillesdelouis.fr">contact@ferraillesdelouis.fr</a></li>
+          <li><span class="lbl">Atelier</span>
+            <span class="val">Votre ville, votre département</span></li>
         </ul>
       </div>
-
       <aside class="contact-card reveal">
         <h3>Demander un devis</h3>
         <p>Décrivez votre projet en quelques mots — Louis vous répond avec plaisir.</p>
-        <!-- ⬇︎ Remplace l'e-mail par celui de Louis -->
         <a class="btn btn-primary"
            href="mailto:contact@ferraillesdelouis.fr?subject=Demande%20de%20devis%20—%20Ferrailles%20de%20Louis&body=Bonjour%20Louis,%0D%0A%0D%0AVoici%20mon%20projet%20:%0D%0A-%20Type%20de%20pièce%20:%0D%0A-%20Dimensions%20:%0D%0A-%20Style%20souhaité%20:%0D%0A-%20Délai%20:%0D%0A%0D%0AMerci%20!">
           Écrire à Louis
@@ -409,7 +406,7 @@
 
 <hr class="temper-rule">
 
-<!-- ======================= FOOTER ======================= -->
+<!-- FOOTER -->
 <footer>
   <div class="wrap foot-inner">
     <p class="foot-brand">Ferrailles de Louis</p>
@@ -417,49 +414,197 @@
   </div>
 </footer>
 
-<script>
-  // Année automatique
-  document.getElementById('year').textContent = new Date().getFullYear();
+<!-- MODALE DE RÉSERVATION -->
+<div class="modal" id="reserveModal" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+  <div class="modal-box">
+    <h3 id="rmTitle">Réserver une pièce</h3>
+    <p class="sub">Pièce : <b id="rmPiece">—</b></p>
+    <div class="field"><label for="rmName">Votre nom</label>
+      <input id="rmName" type="text" autocomplete="name"></div>
+    <div class="field"><label for="rmContact">E-mail ou téléphone</label>
+      <input id="rmContact" type="text" autocomplete="email"></div>
+    <div class="field"><label for="rmMsg">Message (facultatif)</label>
+      <textarea id="rmMsg"></textarea></div>
+    <div class="form-msg" id="rmOut" role="status" aria-live="polite"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn-cancel" id="rmCancel">Annuler</button>
+      <button type="button" class="btn-send" id="rmSend">Confirmer la réservation</button>
+    </div>
+  </div>
+</div>
 
-  // Révélation douce au défilement
-  (function(){
-    var els = document.querySelectorAll('.reveal');
-    if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
-      });
-    }, { threshold:.14 });
-    els.forEach(function(e){ io.observe(e); });
-  })();
+<script>
+/* ============================================================
+   RÉGLAGES — À COMPLÉTER (voir la notice en chat / en bas du code)
+   ============================================================ */
+const CONFIG = {
+  // 1) Base de données partagée Supabase (obligatoire pour le blocage automatique)
+  SUPABASE_URL:      "https://VOTRE-PROJET.supabase.co",
+  SUPABASE_ANON_KEY: "VOTRE-CLE-ANON-PUBLIQUE",
+
+  // 2) Notification e-mail à Louis (facultatif — endpoint Formspree). Laisser vide si non utilisé.
+  FORMSPREE_ENDPOINT: "",
+
+  // 3) E-mail de secours : utilisé si la base n'est pas encore configurée
+  EMAIL_LOUIS: "contact@ferraillesdelouis.fr"
+};
+
+/* ============================================================ */
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Révélation au défilement
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold:.14 });
+  els.forEach(function(e){ io.observe(e); });
+})();
+
+// La base est-elle configurée ?
+const CONFIGURED =
+  CONFIG.SUPABASE_URL && CONFIG.SUPABASE_URL.indexOf('VOTRE-') === -1 &&
+  CONFIG.SUPABASE_ANON_KEY && CONFIG.SUPABASE_ANON_KEY.indexOf('VOTRE-') === -1 &&
+  window.supabase;
+
+let sb = null;
+if (CONFIGURED) { sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY); }
+
+// Utilitaires
+function cardBySlug(slug){ return document.querySelector('.card[data-slug="'+slug+'"]'); }
+function markReserved(slug){
+  const c = cardBySlug(slug);
+  if(!c) return;
+  c.classList.add('is-reserved');
+  const b = c.querySelector('.reserve-btn'); if(b){ b.disabled = true; }
+}
+
+// Charger l'état des pièces au démarrage
+async function loadStatuses(){
+  if(!sb) return;
+  try{
+    const { data, error } = await sb.from('pieces').select('slug,reserved');
+    if(error){ console.warn('Lecture pieces:', error.message); return; }
+    (data||[]).forEach(function(p){ if(p.reserved) markReserved(p.slug); });
+  }catch(e){ console.warn(e); }
+}
+loadStatuses();
+
+// Mise à jour en direct (si la fonctionnalité Realtime est activée sur la table)
+if(sb){
+  sb.channel('pieces-rt')
+    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'pieces' }, function(payload){
+      if(payload.new && payload.new.reserved){ markReserved(payload.new.slug); }
+    })
+    .subscribe();
+}
+
+// ---- Modale ----
+const modal   = document.getElementById('reserveModal');
+const rmPiece = document.getElementById('rmPiece');
+const rmName  = document.getElementById('rmName');
+const rmContact = document.getElementById('rmContact');
+const rmMsg   = document.getElementById('rmMsg');
+const rmOut   = document.getElementById('rmOut');
+const rmSend  = document.getElementById('rmSend');
+let currentSlug = null, currentName = null;
+
+function openModal(slug, name){
+  currentSlug = slug; currentName = name;
+  rmPiece.textContent = name;
+  rmName.value = ''; rmContact.value = ''; rmMsg.value = '';
+  rmOut.textContent = ''; rmOut.className = 'form-msg';
+  rmSend.disabled = false;
+  modal.classList.add('open');
+  setTimeout(function(){ rmName.focus(); }, 40);
+}
+function closeModal(){ modal.classList.remove('open'); }
+
+document.getElementById('rmCancel').addEventListener('click', closeModal);
+modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+// Secours e-mail si la base n'est pas configurée
+function mailtoFallback(name){
+  const sujet = encodeURIComponent('Réservation — ' + name);
+  const corps = encodeURIComponent(
+    'Bonjour Louis,\n\nJe souhaite réserver cette pièce : ' + name +
+    '.\n\nMon nom :\nMon e-mail ou téléphone :\n\nMerci !');
+  window.location.href = 'mailto:' + CONFIG.EMAIL_LOUIS + '?subject=' + sujet + '&body=' + corps;
+}
+
+// Brancher les boutons "Réserver"
+document.querySelectorAll('.card[data-slug] .reserve-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    const card = btn.closest('.card');
+    const slug = card.getAttribute('data-slug');
+    const name = (card.getAttribute('data-name') || '').replace('&amp;','&');
+    if(!sb){ mailtoFallback(name); return; }   // pas de base → e-mail
+    openModal(slug, name);
+  });
+});
+
+// Envoi de la réservation
+rmSend.addEventListener('click', async function(){
+  const nom = rmName.value.trim();
+  const contact = rmContact.value.trim();
+  const message = rmMsg.value.trim();
+  if(!nom || !contact){
+    rmOut.className = 'form-msg error';
+    rmOut.textContent = 'Merci d\'indiquer votre nom et un moyen de vous joindre.';
+    return;
+  }
+  rmSend.disabled = true;
+  rmOut.className = 'form-msg';
+  rmOut.textContent = 'Envoi en cours…';
+  try{
+    // 1) Enregistrer la réservation (privé — visible par Louis dans son tableau de bord)
+    const ins = await sb.from('reservations').insert({
+      piece_slug: currentSlug, name: nom, contact: contact, message: message
+    });
+    if(ins.error) throw ins.error;
+
+    // 2) Bloquer la pièce pour tout le monde
+    const upd = await sb.from('pieces').update({ reserved:true }).eq('slug', currentSlug);
+    if(upd.error) throw upd.error;
+
+    // 3) Notifier Louis par e-mail (facultatif)
+    if(CONFIG.FORMSPREE_ENDPOINT){
+      fetch(CONFIG.FORMSPREE_ENDPOINT, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+        body: JSON.stringify({ piece: currentName, nom: nom, contact: contact, message: message })
+      }).catch(function(){});
+    }
+
+    markReserved(currentSlug);
+    rmOut.className = 'form-msg ok';
+    rmOut.textContent = 'Réservation enregistrée ✓ Louis vous recontacte très vite.';
+    setTimeout(closeModal, 1600);
+  }catch(err){
+    console.warn(err);
+    rmSend.disabled = false;
+    rmOut.className = 'form-msg error';
+    rmOut.textContent = 'Oups, l\'envoi a échoué. Réessayez, ou contactez Louis directement.';
+  }
+});
 </script>
 
 <!--
   ============================================================
-  NOTICE — COMMENT PERSONNALISER (à lire, puis tu peux l'effacer)
+  NOTICE — PERSONNALISATION (à lire, puis tu peux l'effacer)
   ============================================================
 
-  1) LES COORDONNÉES
-     Cherche les petites flèches "⬇︎" dans la section CONTACT et remplace :
-     - le numéro de téléphone,
-     - l'adresse e-mail (à changer à 3 endroits : les deux liens mailto et le lien "Écrire à Louis"),
-     - la ville / le département.
+  A) COORDONNÉES  → section CONTACT + variable EMAIL_LOUIS dans les RÉGLAGES.
+  B) PHOTOS        → dossier "images" + balise <img> dans les cartes / l'atelier.
+  C) RÉSERVATIONS  → renseigner SUPABASE_URL et SUPABASE_ANON_KEY dans les RÉGLAGES
+                     (le pas-à-pas de création de la base est expliqué à part).
+  D) E-MAIL AUTO   → (facultatif) coller un endpoint Formspree dans FORMSPREE_ENDPOINT.
 
-  2) AJOUTER DES PHOTOS DES CRÉATIONS
-     - Crée un dossier "images" à côté de ce fichier index.html.
-     - Mets-y les photos (ex : portail.jpg, table.jpg ...).
-     - Dans la GALERIE, ajoute une ligne <img> juste après <span class="ph"> :
-         <img src="images/portail.jpg" alt="Portail en fer forgé">
-       La photo recouvre alors automatiquement le fond gris. Répète pour chaque carte.
-
-  3) PHOTO DE L'ATELIER (section Le savoir-faire)
-     Remplace tout le bloc <figure class="about-media">...</figure> par :
-         <img class="about-media" src="images/atelier.jpg" alt="Louis à la forge"
-              style="object-fit:cover;">
-
-  4) LE TEXTE
-     Tous les textes sont modifiables directement dans le code (titres, descriptions...).
-     Adapte-les avec les vrais mots de ton père.
+  Tant que la base n'est pas configurée, le bouton "Réserver" ouvre un e-mail pré-rempli :
+  le site reste utilisable dès maintenant.
 -->
 
 </body>
