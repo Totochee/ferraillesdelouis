@@ -52,8 +52,10 @@
     .about-visual{min-height:0!important;overflow:visible!important;background:transparent!important;border-radius:0!important}
     .about-visual img{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;padding:0!important;object-fit:initial!important;display:block;border-radius:0!important;box-shadow:none!important;transform:none!important}
     .about-visual:before,.about-visual:after,.about-stamp{display:none!important}
-  .about-visual{position:relative!important;min-height:0!important;overflow:hidden!important;border-radius:22px!important;background:#eceae3!important;aspect-ratio:4/5;max-width:440px;margin-inline:auto;box-shadow:0 22px 48px -26px rgba(18,0,51,.38)}
-.about-visual img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;padding:0!important;margin:0!important;object-fit:cover!important;object-position:center!important;border-radius:0!important;transform:none!important}</style>
+  .about-visual{position:relative!important;min-height:0!important;aspect-ratio:4/5!important;width:100%!important;max-width:420px!important;margin-inline:auto!important;overflow:hidden!important;border-radius:20px!important;background:#e9e6df!important;box-shadow:0 20px 46px -26px rgba(18,0,51,.35)!important}
+.about-visual img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;object-fit:cover!important;object-position:50% 30%!important;border-radius:0!important;transform:none!important}
+.about-visual:hover img{transform:none!important}
+@media(max-width:800px){.about-visual{max-width:340px!important}}</style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
