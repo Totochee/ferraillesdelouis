@@ -1,10 +1,27 @@
 /* Ferrailles de Louis — script commun à l'accueil et à la page Créations.
-   Les œuvres sont dans js/oeuvres.js (variable OEUVRES). */
+   Les œuvres viennent de la base Supabase (table "pieces", gérée depuis l'Espace privé).
+   Si la base ne répond pas, on affiche la liste de secours de js/oeuvres.js (variable OEUVRES). */
 (function(){
+  const SUPABASE_URL='https://ficpgpduwkgdqcfgjtdi.supabase.co';
+  const SUPABASE_KEY='sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk';
+  const STORE=SUPABASE_URL+'/storage/v1/object/public/oeuvres/';
+  async function loadCatalogue(){
+    try{
+      const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),3500);
+      const r=await fetch(SUPABASE_URL+'/rest/v1/pieces?select=slug,name,cat,photos,avant,reserved&visible=eq.true&order=ordre.asc,created_at.desc',{headers:{apikey:SUPABASE_KEY},signal:ctl.signal});
+      clearTimeout(t);if(!r.ok)throw new Error(r.status);
+      const L=(await r.json()).filter(p=>Array.isArray(p.photos)&&p.photos.length&&p.cat).map(p=>({slug:p.slug,nom:p.name,cat:p.cat,photos:p.photos,avant:!!p.avant,reserved:!!p.reserved}));
+      if(L.length)return L;
+    }catch(e){console.warn('Catalogue hors ligne, liste de secours',e)}
+    return typeof OEUVRES!=='undefined'?OEUVRES:[];
+  }
+  loadCatalogue().then(boot);
+
+  function boot(OEUVRES){
   const $=id=>document.getElementById(id);
   const RUBRIQUES=[...new Set(OEUVRES.map(o=>o.cat))];
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const src=(i,s)=>'img/oeuvres/'+i+'-'+s+'.jpg';
+  const src=(i,s)=>typeof i==='number'?'img/oeuvres/'+i+'-'+s+'.jpg':STORE+i+'-'+s+'.jpg';
   const slugify=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/&/g,' ').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const normTxt=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
   const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -71,7 +88,7 @@
       if(fromHash||q)setTimeout(()=>$('galerie').scrollIntoView({block:'start'}),60);
     }else{
       /* Accueil : uniquement les coups de cœur */
-      const sel=OEUVRES.filter(o=>o.avant);
+      const sel=OEUVRES.filter(o=>o.avant);if(!sel.length)sel.push(...OEUVRES.slice(0,4));
       /* complète la mosaïque pour qu'elle tombe juste (4 colonnes, sans trou) */
       const extra=['oeuvre-250','oeuvre-40','oeuvre-268','oeuvre-124','oeuvre-4','oeuvre-196'].map(s=>byslug[s]).filter(o=>o&&!o.avant);
       while(sel.length%4!==0&&extra.length)sel.push(extra.shift());
@@ -112,7 +129,7 @@
   /* ---------- Carrousel de l'accueil (en boucle : après la 7e pièce revient la 1re) ---------- */
   const track=$('track');
   if(track){
-    const feat=OEUVRES.filter(o=>o.avant);const N=feat.length;
+    let feat=OEUVRES.filter(o=>o.avant);if(!feat.length)feat=OEUVRES.slice(0,7);const N=feat.length;
     const slideHTML=o=>'<article class="slide"><img src="'+src(o.photos[0],640)+'" alt=""><div><h3>'+esc(o.nom)+'</h3><p>'+esc(o.cat)+(o.photos.length>1?' · '+o.photos.length+' photos':'')+'</p><a class="pill" href="#'+o.slug+'" data-open="'+o.slug+'">Voir la pièce</a></div></article>';
     /* trois copies de la série : on circule dans celle du milieu, les autres remplissent les côtés */
     track.innerHTML=[0,1,2].map(()=>feat.map(slideHTML).join('')).join('');
@@ -174,8 +191,6 @@
   if('IntersectionObserver'in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});els.forEach(e=>io.observe(e))}else els.forEach(e=>e.classList.add('in'));
 
   /* ---------- Réservations (Supabase) ---------- */
-  const SUPABASE_URL='https://ficpgpduwkgdqcfgjtdi.supabase.co';
-  const SUPABASE_KEY='sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk';
   function initReservations(){
     let sb=null;try{sb=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null}catch(e){sb=null}
     const modal=$('reserveModal'),pieceName=$('pieceName');
@@ -192,6 +207,7 @@
       currentSlug=card.dataset.slug;currentName=card.dataset.name;
       pieceName.textContent=currentName;nameInput.value='';contactInput.value='';phoneInput.value='';messageInput.value='';out.textContent='';out.className='form-msg';send.disabled=false;modal.classList.add('open');setTimeout(()=>nameInput.focus(),40);
     }));
+    OEUVRES.forEach(o=>{if(o.reserved)markReserved(o.slug)});
     if(sb){
       sb.from('pieces').select('slug,reserved').then(({data})=>(data||[]).forEach(p=>{if(p.reserved)markReserved(p.slug)}),()=>{});
       try{sb.channel('pieces-live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'pieces'},payload=>{if(payload.new&&payload.new.reserved)markReserved(payload.new.slug)}).subscribe()}catch(e){}
@@ -210,4 +226,5 @@
     });
   }
   if(document.readyState==='complete')initReservations();else addEventListener('load',initReservations);
+  }
 })();

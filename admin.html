@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/site.css">
   <style>
     body{min-height:100svh}
+    [hidden]{display:none!important}
     .admin{width:min(1000px,calc(100% - 36px));margin:auto;padding-block:28px 80px}
     .admin-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:22px;border-bottom:1px solid var(--glass-line)}
     .admin-top img{height:48px;width:auto}
@@ -40,7 +41,7 @@
     .resa .when{font-size:13px;color:var(--muted)}
     .resa .who{margin:6px 0 0;font-size:15px}
     .resa .who a{color:var(--ember);font-weight:600;overflow-wrap:anywhere}
-    .resa .note{margin:6px 0 0;color:var(--soft);font-size:14px;white-space:pre-wrap}
+    .resa .txt{margin:6px 0 0;color:var(--soft);font-size:14px;white-space:pre-wrap}
     .resa .acts{display:grid;gap:8px;justify-items:end}
     .resa .acts button{min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--glass-line);background:var(--glass-strong);color:var(--text);font:600 13px "Urbanist",sans-serif;cursor:pointer;white-space:nowrap}
     .resa .acts button.warn{color:#ffb4a3}
@@ -49,6 +50,34 @@
     .badge.free{background:#2f7a47}
     .empty{padding:30px;border:1px dashed var(--glass-line);border-radius:18px;color:var(--soft);text-align:center}
     .linkbtn{background:none;border:1px solid var(--glass-line);color:var(--soft);border-radius:999px;min-height:40px;padding:0 16px;font:600 14px "Urbanist",sans-serif;cursor:pointer}
+    .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+    .bar input{flex:1;min-width:180px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--glass-line);background:var(--glass);color:var(--text);font:15px "Urbanist",sans-serif}
+    .btn{min-height:44px;padding:0 20px;border-radius:999px;border:0;background:var(--ember);color:#fff;font:700 15px "Urbanist",sans-serif;cursor:pointer}
+    .btn:disabled{opacity:.6;cursor:wait}
+    .btn.ghost{background:var(--glass);border:1px solid var(--glass-line);color:var(--text)}
+    .badge.star{background:#c99a2e}.badge.off{background:#555}
+    .resa.hidden-piece img{filter:grayscale(1) brightness(.6)}
+    .editor{display:grid;gap:18px;max-width:760px}
+    .editor h2{font-size:clamp(26px,3vw,36px);font-weight:700}
+    .field{display:grid;gap:6px;font-size:14px;font-weight:600;color:var(--soft)}
+    .field input[type=text],.field select{width:100%;min-height:50px;padding:0 16px;border-radius:14px;border:1px solid var(--glass-line);background:var(--glass);color:var(--text);font:16px "Urbanist",sans-serif}
+    .field select option{background:#1d1e1c}
+    .check{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--text);cursor:pointer}
+    .check input{width:22px;height:22px;accent-color:var(--ember)}
+    .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+    .ph{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;background:#111;border:1px solid var(--glass-line)}
+    .ph img{width:100%;height:100%;object-fit:cover}
+    .ph .main{position:absolute;left:8px;top:8px;padding:3px 9px;border-radius:999px;background:var(--ember);color:#fff;font-size:11px;font-weight:700}
+    .ph .tools{position:absolute;inset:auto 6px 6px 6px;display:flex;justify-content:space-between;gap:4px}
+    .ph .tools button{width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font:700 15px "Urbanist",sans-serif;cursor:pointer}
+    .ph .tools button:disabled{opacity:.25}
+    .ph .tools .rm{background:rgba(160,40,20,.85)}
+    .add-ph{display:grid;place-items:center;align-content:center;gap:6px;aspect-ratio:1;border-radius:14px;border:2px dashed var(--glass-line);color:var(--soft);cursor:pointer;text-align:center;font-size:14px;font-weight:600;padding:10px}
+    .add-ph b{font-size:34px;line-height:1;color:var(--text)}
+    .add-ph input{display:none}
+    .hint{font-weight:400;font-size:13px;color:var(--muted)}
+    .ed-acts{display:flex;flex-wrap:wrap;gap:10px}
+    @media(max-width:640px){.photos{grid-template-columns:repeat(2,1fr)}.ed-acts .btn{flex:1}}
     @media(max-width:640px){.resa{grid-template-columns:72px minmax(0,1fr)}.resa img{width:72px;height:72px}.resa .acts{grid-column:1/-1;justify-items:stretch;grid-template-columns:1fr 1fr}}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -74,70 +103,181 @@
 
     <!-- Réservations -->
     <section id="adminView" hidden>
-      <h1>Réservations</h1>
+      <h1>Espace privé</h1>
       <p class="sub" id="hello"></p>
       <div class="stats" id="stats"></div>
       <div class="tabs" role="toolbar" aria-label="Afficher">
         <button type="button" data-tab="resa" aria-pressed="true">Demandes reçues</button>
         <button type="button" data-tab="reserved" aria-pressed="false">Pièces réservées</button>
+        <button type="button" data-tab="pieces" aria-pressed="false">Mes pièces</button>
+      </div>
+      <div class="bar" id="piecesBar" hidden>
+        <button class="btn" type="button" id="addPiece">+ Ajouter une pièce</button>
+        <input type="search" id="pieceSearch" placeholder="Rechercher une pièce…" aria-label="Rechercher une pièce">
       </div>
       <div class="list" id="list"></div>
+      <form class="editor" id="editor" hidden novalidate>
+        <h2 id="edTitle">Nouvelle pièce</h2>
+        <label class="field" for="edName">Nom de la pièce<input id="edName" type="text" maxlength="80" placeholder="Ex. : Taureau, Guitare, Croix occitane…"></label>
+        <label class="field" for="edCat">Rubrique<select id="edCat"></select></label>
+        <label class="field" for="edNewCat" id="edNewCatWrap" hidden>Nom de la nouvelle rubrique<input id="edNewCat" type="text" maxlength="40"></label>
+        <div class="field">Photos <span class="hint">La première photo est celle qu’on voit en premier. Elles sont mises automatiquement dans la bonne taille et la bonne qualité pour le site.</span>
+          <div class="photos" id="edPhotos"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="edAvant"> Coup de cœur (mise en avant sur la page d’accueil)</label>
+        <div class="ed-acts">
+          <button class="btn" type="submit" id="edSave">Enregistrer et publier</button>
+          <button class="btn ghost" type="button" id="edCancel">Annuler</button>
+        </div>
+        <p class="msg" id="edMsg" role="status" aria-live="polite"></p>
+      </form>
       <p class="msg" id="actMsg" role="status" aria-live="polite"></p>
     </section>
   </div>
 
-  <script src="js/oeuvres.js"></script>
   <script>
   (function(){
-    const sb=supabase.createClient('https://ficpgpduwkgdqcfgjtdi.supabase.co','sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk');
+    const SUPABASE_URL='https://ficpgpduwkgdqcfgjtdi.supabase.co';
+    const sb=supabase.createClient(SUPABASE_URL,'sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk');
+    const STORE=SUPABASE_URL+'/storage/v1/object/public/oeuvres/';
     const $=id=>document.getElementById(id);
     const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-    const bySlug=Object.fromEntries(OEUVRES.map(o=>[o.slug,o]));
-    const photo=slug=>bySlug[slug]?'img/oeuvres/'+bySlug[slug].photos[0]+'-640.jpg':'img/fdl-blanc.png';
+    const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+    /* une photo = un numéro (images d'origine du site) ou un chemin dans le stockage (photos ajoutées ici) */
+    const src=(i,s)=>typeof i==='number'?'img/oeuvres/'+i+'-'+s+'.jpg':STORE+i+'-'+s+'.jpg';
     const dateFr=d=>new Date(d).toLocaleString('fr-FR',{dateStyle:'long',timeStyle:'short'});
-    let resas=[],pieces=[],tab='resa',confirmId=null;
+    let resas=[],pieces=[],tab='resa',confirmId=null,editing=null,photos=[],busy=false;
+    const bySlug=()=>Object.fromEntries(pieces.map(p=>[p.slug,p]));
+    const thumb=p=>p&&p.photos&&p.photos.length?src(p.photos[0],640):'img/fdl-blanc.png';
+    const catalogue=()=>pieces.filter(p=>Array.isArray(p.photos)&&p.photos.length);
 
     function show(logged){$('loginView').hidden=logged;$('adminView').hidden=!logged;$('logout').hidden=!logged}
 
     async function load(){
       const [r,p]=await Promise.all([
         sb.from('reservations').select('id,piece_slug,name,phone,contact,message,created_at').order('created_at',{ascending:false}),
-        sb.from('pieces').select('slug,name,reserved')
+        sb.from('pieces').select('slug,name,cat,photos,avant,ordre,visible,reserved,created_at').order('ordre',{ascending:true}).order('created_at',{ascending:false})
       ]);
-      if(r.error||p.error){$('list').innerHTML='<div class="empty">Impossible de charger les réservations. Réessayez dans un instant.</div>';return}
+      if(r.error||p.error){$('list').innerHTML='<div class="empty">Impossible de charger les données. Réessayez dans un instant.</div>';return}
       resas=r.data;pieces=p.data;render();
     }
     function contactLink(c){c=String(c||'').trim();if(c.includes('@'))return '<a href="mailto:'+esc(c)+'">'+esc(c)+'</a>';const t=c.replace(/[^\d+]/g,'');return t.length>=8?'<a href="tel:'+esc(t)+'">'+esc(c)+'</a>':esc(c)}
+
     function render(){
-      const reserved=pieces.filter(p=>p.reserved);
-      $('stats').innerHTML='<span><b>'+resas.length+'</b> demande'+(resas.length>1?'s':'')+'</span><span><b>'+reserved.length+'</b> pièce'+(reserved.length>1?'s':'')+' réservée'+(reserved.length>1?'s':'')+'</span>';
+      const B=bySlug(),reserved=pieces.filter(p=>p.reserved),cat=catalogue();
+      $('stats').innerHTML='<span><b>'+resas.length+'</b> demande'+(resas.length>1?'s':'')+'</span><span><b>'+reserved.length+'</b> pièce'+(reserved.length>1?'s':'')+' réservée'+(reserved.length>1?'s':'')+'</span><span><b>'+cat.filter(p=>p.visible).length+'</b> pièces en ligne</span>';
       document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab===tab));
-      const isRes=s=>(pieces.find(p=>p.slug===s)||{}).reserved;
+      $('piecesBar').hidden=tab!=='pieces'||!!editing;$('editor').hidden=!editing;$('list').hidden=!!editing;
+      if(editing)return;
       if(tab==='resa'){
-        $('list').innerHTML=resas.length?resas.map(x=>{const o=bySlug[x.piece_slug];const nom=o?o.nom:((pieces.find(p=>p.slug===x.piece_slug)||{}).name||x.piece_slug);
-          return '<article class="resa" data-id="'+x.id+'" data-slug="'+esc(x.piece_slug)+'"><img src="'+photo(x.piece_slug)+'" alt="">'+
-          '<div><span class="when">'+dateFr(x.created_at)+'</span><h3>'+esc(nom)+(isRes(x.piece_slug)?'<span class="badge">Réservée</span>':'<span class="badge free">Remise en vente</span>')+'</h3>'+
-          '<p class="who"><b>'+esc(x.name)+'</b>'+(x.phone?' · '+contactLink(x.phone):'')+(x.contact&&x.contact!==x.phone?' · '+contactLink(x.contact):'')+'</p>'+(x.message?'<p class="note">'+esc(x.message)+'</p>':'')+'</div>'+
-          '<div class="acts">'+(isRes(x.piece_slug)?'<button type="button" data-act="free">Remettre en vente</button>':'')+
+        $('list').innerHTML=resas.length?resas.map(x=>{const p=B[x.piece_slug];const nom=p?p.name:x.piece_slug;
+          return '<article class="resa" data-id="'+x.id+'" data-slug="'+esc(x.piece_slug)+'"><img src="'+thumb(p)+'" alt="">'+
+          '<div><span class="when">'+dateFr(x.created_at)+'</span><h3>'+esc(nom)+(p&&p.reserved?'<span class="badge">Réservée</span>':'<span class="badge free">Remise en vente</span>')+'</h3>'+
+          '<p class="who"><b>'+esc(x.name)+'</b>'+(x.phone?' · '+contactLink(x.phone):'')+(x.contact&&x.contact!==x.phone?' · '+contactLink(x.contact):'')+'</p>'+(x.message?'<p class="txt">'+esc(x.message)+'</p>':'')+'</div>'+
+          '<div class="acts">'+(p&&p.reserved?'<button type="button" data-act="free">Remettre en vente</button>':'')+
           (confirmId===x.id?'<button type="button" class="warn" data-act="del-ok">Confirmer la suppression</button><button type="button" data-act="del-no">Annuler</button>':'<button type="button" class="warn" data-act="del">Supprimer la demande</button>')+'</div></article>'}).join('')
           :'<div class="empty">Aucune réservation pour le moment.</div>';
-      }else{
-        $('list').innerHTML=reserved.length?reserved.map(p=>{const o=bySlug[p.slug];
-          return '<article class="resa" data-slug="'+esc(p.slug)+'"><img src="'+photo(p.slug)+'" alt=""><div><h3>'+esc(o?o.nom:p.name)+'</h3><p class="note">'+esc(o?o.cat:'')+'</p></div><div class="acts"><button type="button" class="ok" data-act="free">Remettre en vente</button></div></article>'}).join('')
+      }else if(tab==='reserved'){
+        $('list').innerHTML=reserved.length?reserved.map(p=>'<article class="resa" data-slug="'+esc(p.slug)+'"><img src="'+thumb(p)+'" alt=""><div><h3>'+esc(p.name)+'</h3><p class="txt">'+esc(p.cat||'')+'</p></div><div class="acts"><button type="button" class="ok" data-act="free">Remettre en vente</button></div></article>').join('')
           :'<div class="empty">Aucune pièce n’est réservée.</div>';
+      }else{
+        const q=norm($('pieceSearch').value.trim());
+        const L=cat.filter(p=>!q||norm(p.name+' '+p.cat).includes(q));
+        $('list').innerHTML=L.length?L.map(p=>'<article class="resa'+(p.visible?'':' hidden-piece')+'" data-slug="'+esc(p.slug)+'"><img src="'+thumb(p)+'" alt="" loading="lazy">'+
+          '<div><h3>'+esc(p.name)+(p.avant?'<span class="badge star">Coup de cœur</span>':'')+(p.reserved?'<span class="badge">Réservée</span>':'')+(p.visible?'':'<span class="badge off">Masquée</span>')+'</h3><p class="txt">'+esc(p.cat||'')+' · '+p.photos.length+' photo'+(p.photos.length>1?'s':'')+'</p></div>'+
+          '<div class="acts"><button type="button" class="ok" data-act="edit">Modifier</button><button type="button" data-act="vis">'+(p.visible?'Masquer du site':'Remettre sur le site')+'</button></div></article>').join('')
+          :'<div class="empty">Aucune pièce trouvée.</div>';
       }
     }
 
-    document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;tab=b.dataset.tab;confirmId=null;render()});
+    document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b||busy)return;tab=b.dataset.tab;confirmId=null;editing=null;$('actMsg').textContent='';render()});
+    $('pieceSearch').addEventListener('input',render);
+    const say=(t,err)=>{$('actMsg').className='msg'+(err?' err':'');$('actMsg').textContent=t};
     $('list').addEventListener('click',async e=>{
-      const b=e.target.closest('button[data-act]');if(!b)return;const card=b.closest('.resa');const act=b.dataset.act;$('actMsg').textContent='';$('actMsg').className='msg';
+      const b=e.target.closest('button[data-act]');if(!b)return;const card=b.closest('.resa');const act=b.dataset.act;say('');
       if(act==='del'){confirmId=card.dataset.id;return render()}
       if(act==='del-no'){confirmId=null;return render()}
+      if(act==='edit')return openEditor(bySlug()[card.dataset.slug]);
       b.disabled=true;
-      if(act==='del-ok'){const {error}=await sb.from('reservations').delete().eq('id',card.dataset.id);confirmId=null;if(error){$('actMsg').className='msg err';$('actMsg').textContent='La suppression n’a pas fonctionné.'}else $('actMsg').textContent='Demande supprimée.';return load()}
-      if(act==='free'){const {error}=await sb.from('pieces').update({reserved:false}).eq('slug',card.dataset.slug);if(error){$('actMsg').className='msg err';$('actMsg').textContent='Impossible de remettre la pièce en vente.'}else $('actMsg').textContent='La pièce est de nouveau disponible sur le site.';return load()}
+      if(act==='del-ok'){const {error}=await sb.from('reservations').delete().eq('id',card.dataset.id);confirmId=null;error?say('La suppression n’a pas fonctionné.',1):say('Demande supprimée.');return load()}
+      if(act==='free'){const {error}=await sb.from('pieces').update({reserved:false}).eq('slug',card.dataset.slug);error?say('Impossible de remettre la pièce en vente.',1):say('La pièce est de nouveau disponible sur le site.');return load()}
+      if(act==='vis'){const p=bySlug()[card.dataset.slug];const {error}=await sb.from('pieces').update({visible:!p.visible}).eq('slug',p.slug);error?say('La modification n’a pas fonctionné.',1):say(p.visible?'« '+p.name+' » n’apparaît plus sur le site.':'« '+p.name+' » est de nouveau sur le site.');return load()}
     });
 
+    /* ---------- Ajout / modification d'une pièce ---------- */
+    function cats(){return [...new Set(catalogue().map(p=>p.cat).filter(Boolean))]}
+    function openEditor(p){
+      editing=p||{};photos=(p&&p.photos?p.photos:[]).map(id=>({id}));
+      $('edTitle').textContent=p?'Modifier « '+p.name+' »':'Nouvelle pièce';
+      $('edName').value=p?p.name:'';$('edAvant').checked=!!(p&&p.avant);
+      const C=cats();$('edCat').innerHTML=(p?'':'<option value="" selected disabled>Choisir une rubrique…</option>')+C.map(c=>'<option'+(p&&p.cat===c?' selected':'')+'>'+esc(c)+'</option>').join('')+'<option value="__new">+ Nouvelle rubrique…</option>';
+      $('edNewCat').value='';$('edNewCatWrap').hidden=true;$('edMsg').textContent='';$('edMsg').className='msg';$('edSave').disabled=false;
+      render();drawPhotos();scrollTo({top:0,behavior:'smooth'});setTimeout(()=>$('edName').focus(),50);
+    }
+    function closeEditor(){editing=null;photos.forEach(x=>x.url&&URL.revokeObjectURL(x.url));photos=[];render()}
+    $('addPiece').addEventListener('click',()=>openEditor(null));
+    $('edCancel').addEventListener('click',()=>{if(!busy)closeEditor()});
+    $('edCat').addEventListener('change',()=>{const n=$('edCat').value==='__new';$('edNewCatWrap').hidden=!n;if(n)$('edNewCat').focus()});
+
+    function drawPhotos(){
+      const n=photos.length;
+      $('edPhotos').innerHTML=photos.map((x,k)=>'<div class="ph"><img src="'+(x.url||src(x.id,640))+'" alt="">'+(k===0?'<span class="main">Photo principale</span>':'')+
+        '<div class="tools"><button type="button" data-mv="-1" data-k="'+k+'" aria-label="Avancer la photo"'+(k===0?' disabled':'')+'>◀</button><button type="button" class="rm" data-rm="'+k+'" aria-label="Retirer la photo">✕</button><button type="button" data-mv="1" data-k="'+k+'" aria-label="Reculer la photo"'+(k===n-1?' disabled':'')+'>▶</button></div></div>').join('')+
+        (n<12?'<label class="add-ph"><b>+</b>'+(n?'Ajouter des photos':'Ajouter les photos')+'<input type="file" id="edFiles" accept="image/*" multiple></label>':'');
+      const f=$('edFiles');if(f)f.addEventListener('change',()=>{[...f.files].slice(0,12-photos.length).forEach(file=>photos.push({file,url:URL.createObjectURL(file)}));drawPhotos()});
+    }
+    $('edPhotos').addEventListener('click',e=>{if(busy)return;const rm=e.target.closest('[data-rm]'),mv=e.target.closest('[data-mv]');
+      if(rm){const [x]=photos.splice(+rm.dataset.rm,1);if(x&&x.url)URL.revokeObjectURL(x.url);drawPhotos()}
+      if(mv){const k=+mv.dataset.k,j=k+ +mv.dataset.mv;[photos[k],photos[j]]=[photos[j],photos[k]];drawPhotos()}});
+
+    /* Photo redressée (sens du téléphone), réduite à 1280 px et 640 px de grand côté, compressée en JPEG de bonne qualité */
+    function loadImg(url){return new Promise((ok,ko)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>ko(new Error('format'));im.src=url})}
+    function scaled(im,max,q){
+      let w=im.naturalWidth,h=im.naturalHeight;const r=Math.min(1,max/Math.max(w,h));const tw=Math.round(w*r),th=Math.round(h*r);
+      let cur=im,cw=w,ch=h;
+      while(cw/2>tw){const c=document.createElement('canvas');c.width=Math.round(cw/2);c.height=Math.round(ch/2);const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(cur,0,0,c.width,c.height);cur=c;cw=c.width;ch=c.height}
+      const c=document.createElement('canvas');c.width=tw;c.height=th;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,tw,th);x.imageSmoothingQuality='high';x.drawImage(cur,0,0,tw,th);
+      return new Promise((ok,ko)=>c.toBlob(b=>b?ok(b):ko(new Error('jpeg')),'image/jpeg',q));
+    }
+    async function upload(x){
+      const im=await loadImg(x.url);
+      const id='u/'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+      for(const [size,q] of [[1280,.86],[640,.82]]){
+        const blob=await scaled(im,size,q);
+        const {error}=await sb.storage.from('oeuvres').upload(id+'-'+size+'.jpg',blob,{contentType:'image/jpeg',cacheControl:'31536000',upsert:false});
+        if(error)throw error;
+      }
+      return id;
+    }
+
+    $('editor').addEventListener('submit',async e=>{
+      e.preventDefault();if(busy)return;
+      const m=(t,err)=>{$('edMsg').className='msg'+(err?' err':'');$('edMsg').textContent=t};
+      const name=$('edName').value.trim();let cat=$('edCat').value==='__new'?$('edNewCat').value.trim():$('edCat').value;
+      if(!name)return m('Donnez un nom à la pièce.',1);
+      if(!cat)return m('Choisissez une rubrique.',1);
+      if(!photos.length)return m('Ajoutez au moins une photo.',1);
+      busy=true;$('edSave').disabled=true;
+      try{
+        const ids=[];const todo=photos.filter(x=>x.file).length;let done=0;
+        for(const x of photos){
+          if(x.file){m('Préparation et envoi des photos… '+(++done)+' / '+todo);
+            try{x.id=await upload(x)}catch(err){throw new Error(err.message==='format'?'Une des photos n’a pas pu être lue. Essayez une photo au format JPEG.':'L’envoi d’une photo n’a pas fonctionné. Vérifiez la connexion et réessayez.')}
+            x.file=null}
+          ids.push(x.id);
+        }
+        m('Enregistrement…');
+        const row={name,cat,photos:ids,avant:$('edAvant').checked};
+        let res;
+        if(editing.slug)res=await sb.from('pieces').update(row).eq('slug',editing.slug);
+        else{const min=Math.min(0,...pieces.map(p=>p.ordre||0));res=await sb.from('pieces').insert({...row,slug:'piece-'+Date.now().toString(36),ordre:min-1,visible:true,reserved:false})}
+        if(res.error)throw new Error('L’enregistrement n’a pas fonctionné. Réessayez dans un instant.');
+        busy=false;const wasNew=!editing.slug;closeEditor();tab='pieces';
+        say(wasNew?'« '+name+' » est en ligne sur le site.':'Modifications enregistrées, elles sont en ligne.');await load();
+      }catch(err){busy=false;$('edSave').disabled=false;m(err.message||'Une erreur est survenue.',1)}
+    });
+
+    /* ---------- Connexion ---------- */
     $('loginForm').addEventListener('submit',async e=>{
       e.preventDefault();$('loginBtn').disabled=true;$('loginMsg').className='msg';$('loginMsg').textContent='Connexion…';
       /* un identifiant simple (ex. lbestion48) correspond au compte lbestion48@ferraillesdelouis.fr ; une adresse e-mail complète marche aussi */
@@ -149,9 +289,11 @@
     });
     $('logout').addEventListener('click',()=>sb.auth.signOut());
 
+    let loaded=false;
     sb.auth.onAuthStateChange((_ev,session)=>{
       show(!!session);
-      if(session){$('hello').textContent='Connecté en tant que '+session.user.email.replace('@ferraillesdelouis.fr','')+'.';load()}
+      if(session&&!loaded){loaded=true;$('hello').textContent='Connecté en tant que '+session.user.email.replace('@ferraillesdelouis.fr','')+'.';load()}
+      if(!session)loaded=false;
     });
   })();
   </script>
