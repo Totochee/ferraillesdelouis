@@ -17,6 +17,22 @@
   }
   loadCatalogue().then(boot);
 
+  /* ---------- Menu qui reste en haut + bouton « retour en haut » ---------- */
+  (function(){
+    const nav=document.getElementById('nav'),top=document.getElementById('toTop');
+    let ph=null;
+    if(nav){ph=document.createElement('div');ph.className='nav-ph';ph.setAttribute('aria-hidden','true');nav.before(ph)}
+    let stuck=false,ticking=false;
+    const update=()=>{ticking=false;const y=scrollY;
+      if(nav){const lim=ph.offsetTop+nav.offsetHeight+40;const want=y>lim;
+        if(want!==stuck){stuck=want;if(want){ph.style.height=nav.offsetHeight+'px';ph.classList.add('on');nav.classList.add('stuck');document.body.classList.add('nav-stuck')}else{nav.classList.remove('stuck');document.body.classList.remove('nav-stuck');ph.classList.remove('on')}}}
+      if(top)top.classList.toggle('show',y>innerHeight*.9);
+    };
+    addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true});
+    addEventListener('resize',update);update();
+    if(top)top.addEventListener('click',()=>{scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});const b=document.querySelector('.brand');if(b)b.focus({preventScroll:true})});
+  })();
+
   function boot(OEUVRES){
   const $=id=>document.getElementById(id);
   const RUBRIQUES=[...new Set(OEUVRES.map(o=>o.cat))];
