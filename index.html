@@ -107,6 +107,35 @@
     .card p{margin:8px 0 22px;color:var(--soft);font-size:15px}
     .card .pill{margin-top:auto;align-self:flex-start}
     .card.is-reserved .reserve-btn{pointer-events:none;background:var(--glass);color:var(--muted)}
+    /* Galerie des œuvres */
+    .filters{display:flex;flex-wrap:wrap;gap:8px;margin:-18px 0 30px}
+    .filters button{min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--glass-line);background:var(--glass);color:var(--soft);font:600 14px "Urbanist",sans-serif;cursor:pointer;transition:background .2s,color .2s}
+    .filters button span{margin-left:6px;font-weight:500;opacity:.6}
+    .filters button:hover{color:#fff}
+    .filters button[aria-pressed="true"]{background:#fff;color:var(--ink);border-color:#fff}
+    .card-img{aspect-ratio:4/5;background:#111;cursor:zoom-in}
+    .card-img .cnav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.88);color:var(--ink);display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .2s}
+    .card:hover .cnav,.card-img:focus-within .cnav{opacity:1}
+    @media(hover:none){.card-img .cnav{opacity:1}}
+    .cnav.p{left:10px}.cnav.n{right:10px}
+    .cnav svg{width:16px;height:16px}
+    .cdots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:6px;pointer-events:none}
+    .cdots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.45)}.cdots i.on{background:#fff}
+    .card p.meta{margin:6px 0 20px;font-size:14px;color:var(--muted)}
+    .more{display:flex;justify-content:center;margin-top:34px}
+    .more[hidden]{display:none}
+    .card.sur-mesure .card-img{cursor:default}
+    .lightbox{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:rgba(10,11,10,.94);padding:clamp(12px,4vw,48px)}
+    .lightbox.open{display:grid}
+    .lightbox figure{margin:0;display:grid;gap:14px;justify-items:center;max-width:100%}
+    .lightbox img{max-width:min(1100px,100%);max-height:calc(100svh - 150px);object-fit:contain;border-radius:12px}
+    .lightbox figcaption{color:var(--soft);font-size:15px;text-align:center}
+    .lightbox figcaption b{color:#fff;font-size:20px;display:block}
+    .lb-btn{position:absolute;display:grid;place-items:center;width:48px;height:48px;border-radius:50%;border:1px solid var(--glass-line);background:var(--glass-strong);color:#fff;cursor:pointer}
+    .lb-btn svg{width:20px;height:20px}
+    .lb-close{top:18px;right:18px}.lb-prev{left:18px;top:50%;transform:translateY(-50%)}.lb-next{right:18px;top:50%;transform:translateY(-50%)}
+    @media(max-width:600px){.lb-prev,.lb-next{top:auto;bottom:18px;transform:none}.filters{flex-wrap:nowrap;overflow-x:auto;margin-right:-18px;padding-right:18px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}.filters button{flex:none}}
+
 
     /* Savoir-faire */
     .process{background:#f7f6f2;color:var(--ink)}
@@ -295,14 +324,7 @@
           </div>
 
           <div class="slider" aria-roledescription="carrousel" aria-label="Catégories de créations">
-            <div class="track" id="track">
-              <article class="slide"><img src="img/enclume.jpg" alt=""><div><h3>Portails forgés</h3><p>Volutes martelées à chaud, faites pour durer.</p><a class="pill" href="#c-portail">Voir la pièce</a></div></article>
-              <article class="slide"><img src="img/marteau.jpg" alt=""><div><h3>Tables &amp; consoles</h3><p>Fer forgé associé au bois massif ou au verre.</p><a class="pill" href="#c-mobilier">Voir la pièce</a></div></article>
-              <article class="slide"><img src="img/feu.jpg" alt=""><div><h3>Lampes &amp; appliques</h3><p>Une lumière chaude à travers le métal ajouré.</p><a class="pill" href="#c-luminaires">Voir la pièce</a></div></article>
-              <article class="slide"><img src="img/outils.jpg" alt=""><div><h3>Pièces murales</h3><p>Sculptures à suspendre, dedans comme dehors.</p><a class="pill" href="#c-decoration">Voir la pièce</a></div></article>
-              <article class="slide"><img src="img/tablier.jpg" alt=""><div><h3>Rosiers &amp; treillages</h3><p>Arceaux et supports conçus pour le jardin.</p><a class="pill" href="#c-jardin">Voir la pièce</a></div></article>
-              <article class="slide"><img src="img/atelier.jpg" alt=""><div><h3>Votre projet</h3><p>Une idée, un croquis : Louis la forge.</p><a class="pill" href="#contact">En parler</a></div></article>
-            </div>
+            <div class="track" id="track"></div>
           </div>
 
           <div class="arrows">
@@ -322,15 +344,10 @@
           <div><p class="eyebrow">Créations &amp; commandes</p><h2>Des objets avec une âme</h2></div>
           <p>Une pièce vous plaît ? Réservez-la en un clic. Un projet en tête ? Tout commence par une conversation.</p>
         </div>
+        <div class="filters" id="catFilters" role="toolbar" aria-label="Filtrer par rubrique"></div>
         <p class="no-result" id="noResult">Aucune création ne correspond. <a href="#contact">Demandez-la sur mesure →</a></p>
-        <div class="cards">
-          <article class="card reveal" id="c-portail" data-slug="portail" data-name="Portail forgé"><div class="card-img"><img src="img/enclume.jpg" alt="" loading="lazy"><span class="tag">Portails &amp; grilles</span><span class="status">Disponible</span></div><div class="card-body"><h3>Portail forgé</h3><p>Fer plein, volutes martelées à chaud et traitement antirouille.</p><button class="pill reserve-btn" type="button">Réserver cette pièce</button></div></article>
-          <article class="card reveal" id="c-mobilier" data-slug="mobilier" data-name="Table &amp; consoles"><div class="card-img"><img src="img/marteau.jpg" alt="" loading="lazy"><span class="tag">Mobilier</span><span class="status">Disponible</span></div><div class="card-body"><h3>Table &amp; consoles</h3><p>Piètement en fer forgé, associé au bois massif ou au verre.</p><button class="pill reserve-btn" type="button">Réserver cette pièce</button></div></article>
-          <article class="card reveal" id="c-luminaires" data-slug="luminaires" data-name="Lampes &amp; appliques"><div class="card-img"><img src="img/feu.jpg" alt="" loading="lazy"><span class="tag">Luminaires</span><span class="status">Disponible</span></div><div class="card-body"><h3>Lampes &amp; appliques</h3><p>Structures ajourées qui révèlent une lumière chaude et vivante.</p><button class="pill reserve-btn" type="button">Réserver cette pièce</button></div></article>
-          <article class="card reveal" id="c-decoration" data-slug="decoration" data-name="Pièces murales"><div class="card-img"><img src="img/outils.jpg" alt="" loading="lazy"><span class="tag">Décoration</span><span class="status">Disponible</span></div><div class="card-body"><h3>Pièces murales</h3><p>Sculptures à suspendre, pensées pour la maison comme le jardin.</p><button class="pill reserve-btn" type="button">Réserver cette pièce</button></div></article>
-          <article class="card reveal" id="c-jardin" data-slug="jardin" data-name="Rosiers &amp; treillages"><div class="card-img"><img src="img/tablier.jpg" alt="" loading="lazy"><span class="tag">Jardin</span><span class="status">Disponible</span></div><div class="card-body"><h3>Rosiers &amp; treillages</h3><p>Arceaux et supports à plantes conçus pour vivre dehors.</p><button class="pill reserve-btn" type="button">Réserver cette pièce</button></div></article>
-          <article class="card reveal" data-name="Sur mesure"><div class="card-img"><img src="img/atelier.jpg" alt="" loading="lazy"><span class="tag">Sur mesure</span></div><div class="card-body"><h3>Votre projet</h3><p>Une idée, un croquis ou une dimension précise : Louis la forge.</p><a class="pill" href="#contact">Commander sur mesure ↗</a></div></article>
-        </div>
+        <div class="cards" id="cards"></div>
+        <div class="more"><button class="pill ghost" type="button" id="moreBtn">Voir plus de créations</button></div>
       </div>
     </section>
 
@@ -426,10 +443,89 @@
     </div>
   </footer>
 
+  <!-- ===== VISIONNEUSE ===== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photos de l’œuvre">
+    <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+    <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <button class="lb-btn lb-prev" id="lbPrev" type="button" aria-label="Photo précédente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button class="lb-btn lb-next" id="lbNext" type="button" aria-label="Photo suivante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+
   <!-- ===== MODAL DE RÉSERVATION ===== -->
   <div class="modal" id="reserveModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-box"><div class="modal-top"><h3 id="modalTitle">Réserver une création</h3><button class="close" id="closeModal" type="button" aria-label="Fermer">×</button></div><p class="modal-sub">Vous souhaitez réserver : <strong id="pieceName">—</strong></p><div class="field"><label for="clientName">Votre nom</label><input id="clientName" type="text" autocomplete="name" required></div><div class="field"><label for="clientContact">E-mail ou téléphone</label><input id="clientContact" type="text" autocomplete="email" required></div><div class="field"><label for="clientMessage">Votre message (facultatif)</label><textarea id="clientMessage"></textarea></div><button class="submit" id="sendReservation" type="button">Confirmer la réservation</button><p class="form-msg" id="formMsg" role="status" aria-live="polite"></p></div></div>
 
   <script>
+    /* ===== Œuvres de Louis (choisies sur son Facebook) ===== */
+    const OEUVRES=[{"slug": "oeuvre-23", "nom": "Lion", "cat": "Animaux", "photos": [23], "avant": false}, {"slug": "oeuvre-30", "nom": "Cheval", "cat": "Animaux", "photos": [30], "avant": false}, {"slug": "oeuvre-40", "nom": "Lion", "cat": "Animaux", "photos": [40, 41, 42, 43], "avant": false}, {"slug": "oeuvre-45", "nom": "Taureau", "cat": "Animaux", "photos": [45], "avant": true}, {"slug": "oeuvre-48", "nom": "Hibou", "cat": "Animaux", "photos": [48], "avant": false}, {"slug": "oeuvre-72", "nom": "Vache", "cat": "Animaux", "photos": [72], "avant": false}, {"slug": "oeuvre-83", "nom": "Taureau", "cat": "Animaux", "photos": [83], "avant": false}, {"slug": "oeuvre-93", "nom": "Taureau", "cat": "Animaux", "photos": [93], "avant": false}, {"slug": "oeuvre-97", "nom": "Cheval", "cat": "Animaux", "photos": [97, 98], "avant": false}, {"slug": "oeuvre-126", "nom": "Mickey Mouse", "cat": "Animaux", "photos": [126, 129], "avant": false}, {"slug": "oeuvre-131", "nom": "Taureau", "cat": "Animaux", "photos": [131, 132], "avant": false}, {"slug": "oeuvre-146", "nom": "Taureau", "cat": "Animaux", "photos": [146, 147], "avant": false}, {"slug": "oeuvre-148", "nom": "Brebis", "cat": "Animaux", "photos": [148], "avant": false}, {"slug": "oeuvre-154", "nom": "Poisson", "cat": "Animaux", "photos": [154], "avant": false}, {"slug": "oeuvre-160", "nom": "Renard", "cat": "Animaux", "photos": [160], "avant": false}, {"slug": "oeuvre-161", "nom": "Hippocampe", "cat": "Animaux", "photos": [161], "avant": false}, {"slug": "oeuvre-176", "nom": "Cheval", "cat": "Animaux", "photos": [176, 177], "avant": false}, {"slug": "oeuvre-179", "nom": "Hibou", "cat": "Animaux", "photos": [179], "avant": false}, {"slug": "oeuvre-181", "nom": "Renard", "cat": "Animaux", "photos": [181], "avant": false}, {"slug": "oeuvre-182", "nom": "Sans titre", "cat": "Animaux", "photos": [182], "avant": false}, {"slug": "oeuvre-203", "nom": "Poisson", "cat": "Animaux", "photos": [203], "avant": false}, {"slug": "oeuvre-204", "nom": "Cheval", "cat": "Animaux", "photos": [204, 205], "avant": true}, {"slug": "oeuvre-222", "nom": "Poisson", "cat": "Animaux", "photos": [222], "avant": false}, {"slug": "oeuvre-241", "nom": "Hippocampe", "cat": "Animaux", "photos": [241, 246], "avant": false}, {"slug": "oeuvre-245", "nom": "Coq", "cat": "Animaux", "photos": [245], "avant": false}, {"slug": "oeuvre-268", "nom": "Grue", "cat": "Animaux", "photos": [268, 269], "avant": false}, {"slug": "oeuvre-274", "nom": "Coq", "cat": "Animaux", "photos": [274, 283], "avant": false}, {"slug": "oeuvre-288", "nom": "Coq", "cat": "Animaux", "photos": [288], "avant": false}, {"slug": "oeuvre-291", "nom": "Coq", "cat": "Animaux", "photos": [291], "avant": false}, {"slug": "oeuvre-312", "nom": "Hibou", "cat": "Animaux", "photos": [312], "avant": false}, {"slug": "oeuvre-12", "nom": "Personnages", "cat": "Personnages", "photos": [12], "avant": false}, {"slug": "oeuvre-18", "nom": "Bonhomme", "cat": "Personnages", "photos": [18], "avant": false}, {"slug": "oeuvre-21", "nom": "Famille", "cat": "Personnages", "photos": [21], "avant": false}, {"slug": "oeuvre-29", "nom": "Petit prince", "cat": "Personnages", "photos": [29], "avant": false}, {"slug": "oeuvre-47", "nom": "Famille", "cat": "Personnages", "photos": [47], "avant": false}, {"slug": "oeuvre-53", "nom": "Famille", "cat": "Personnages", "photos": [53], "avant": true}, {"slug": "oeuvre-56", "nom": "Petit prince", "cat": "Personnages", "photos": [56], "avant": true}, {"slug": "oeuvre-134", "nom": "Personnage", "cat": "Personnages", "photos": [134], "avant": false}, {"slug": "oeuvre-159", "nom": "Couple", "cat": "Personnages", "photos": [159], "avant": false}, {"slug": "oeuvre-170", "nom": "Mage", "cat": "Personnages", "photos": [170], "avant": false}, {"slug": "oeuvre-180", "nom": "Fée", "cat": "Personnages", "photos": [180, 183], "avant": false}, {"slug": "oeuvre-199", "nom": "Petit prince", "cat": "Personnages", "photos": [199], "avant": false}, {"slug": "oeuvre-292", "nom": "Personnage", "cat": "Personnages", "photos": [292], "avant": false}, {"slug": "oeuvre-294", "nom": "Surfer", "cat": "Personnages", "photos": [294], "avant": false}, {"slug": "oeuvre-61", "nom": "Violoncelle", "cat": "Instruments de musique", "photos": [61], "avant": false}, {"slug": "oeuvre-65", "nom": "Guitare", "cat": "Instruments de musique", "photos": [65], "avant": false}, {"slug": "oeuvre-74", "nom": "Guitare", "cat": "Instruments de musique", "photos": [74], "avant": false}, {"slug": "oeuvre-115", "nom": "Guitare", "cat": "Instruments de musique", "photos": [115, 116], "avant": false}, {"slug": "oeuvre-136", "nom": "Guitare", "cat": "Instruments de musique", "photos": [136], "avant": false}, {"slug": "oeuvre-155", "nom": "Guitare", "cat": "Instruments de musique", "photos": [155], "avant": false}, {"slug": "oeuvre-167", "nom": "Guitare", "cat": "Instruments de musique", "photos": [167], "avant": false}, {"slug": "oeuvre-192", "nom": "Violon", "cat": "Instruments de musique", "photos": [192], "avant": false}, {"slug": "oeuvre-196", "nom": "Saxophone", "cat": "Instruments de musique", "photos": [196], "avant": false}, {"slug": "oeuvre-197", "nom": "Violon", "cat": "Instruments de musique", "photos": [197], "avant": false}, {"slug": "oeuvre-250", "nom": "Guitare", "cat": "Instruments de musique", "photos": [250, 247, 248, 249], "avant": false}, {"slug": "oeuvre-266", "nom": "Saxophone", "cat": "Instruments de musique", "photos": [266], "avant": false}, {"slug": "oeuvre-1", "nom": "Cardabelle", "cat": "Soleils & rosaces", "photos": [1], "avant": true}, {"slug": "oeuvre-34", "nom": "Cardabelle", "cat": "Soleils & rosaces", "photos": [34], "avant": false}, {"slug": "oeuvre-92", "nom": "Cardabelle", "cat": "Soleils & rosaces", "photos": [92], "avant": false}, {"slug": "oeuvre-150", "nom": "Cardabelle", "cat": "Soleils & rosaces", "photos": [150], "avant": false}, {"slug": "oeuvre-276", "nom": "Cardabelle", "cat": "Soleils & rosaces", "photos": [276], "avant": false}, {"slug": "oeuvre-38", "nom": "Croix occitane", "cat": "Croix occitanes", "photos": [38], "avant": false}, {"slug": "oeuvre-75", "nom": "Sans titre", "cat": "Croix occitanes", "photos": [75], "avant": false}, {"slug": "oeuvre-82", "nom": "Sans titre", "cat": "Croix occitanes", "photos": [82], "avant": false}, {"slug": "oeuvre-99", "nom": "Croix occitane", "cat": "Croix occitanes", "photos": [99], "avant": false}, {"slug": "oeuvre-100", "nom": "Croix occitane", "cat": "Croix occitanes", "photos": [100], "avant": false}, {"slug": "oeuvre-117", "nom": "Croix occitane", "cat": "Croix occitanes", "photos": [117], "avant": false}, {"slug": "oeuvre-125", "nom": "Croix occitane", "cat": "Croix occitanes", "photos": [125], "avant": true}, {"slug": "oeuvre-151", "nom": "Croix occitane", "cat": "Croix occitanes", "photos": [151], "avant": false}, {"slug": "oeuvre-31", "nom": "Luminaire", "cat": "Luminaires", "photos": [31, 44], "avant": false}, {"slug": "oeuvre-124", "nom": "Lampe", "cat": "Luminaires", "photos": [124, 135], "avant": false}, {"slug": "oeuvre-299", "nom": "Lampe", "cat": "Luminaires", "photos": [299, 300], "avant": false}, {"slug": "oeuvre-4", "nom": "Table basse", "cat": "Mobilier", "photos": [4, 7, 11], "avant": false}, {"slug": "oeuvre-156", "nom": "Table d'appoint", "cat": "Mobilier", "photos": [156, 157], "avant": false}, {"slug": "oeuvre-37", "nom": "Cadre", "cat": "Décoration & divers", "photos": [37], "avant": false}, {"slug": "oeuvre-52", "nom": "Bateau", "cat": "Décoration & divers", "photos": [52], "avant": true}, {"slug": "oeuvre-54", "nom": "Cadre", "cat": "Décoration & divers", "photos": [54], "avant": false}, {"slug": "oeuvre-85", "nom": "Bateau", "cat": "Décoration & divers", "photos": [85], "avant": false}, {"slug": "oeuvre-237", "nom": "Écriteau « Cardabelle »", "cat": "Décoration & divers", "photos": [237], "avant": false}, {"slug": "oeuvre-287", "nom": "Train", "cat": "Décoration & divers", "photos": [287], "avant": false}, {"slug": "oeuvre-333", "nom": "Moto", "cat": "Décoration & divers", "photos": [333], "avant": false}, {"slug": "oeuvre-361", "nom": "Moto", "cat": "Décoration & divers", "photos": [361], "avant": false}];
+    const RUBRIQUES=[...new Set(OEUVRES.map(o=>o.cat))];
+    const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const src=(i,s)=>'img/oeuvres/'+i+'-'+s+'.jpg';
+    const ARROW={p:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',n:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>'};
+    function cardHTML(o){
+      const n=o.photos.length, i=o.photos[0];
+      return '<article class="card" data-slug="'+o.slug+'" data-name="'+esc(o.nom)+'" data-cat="'+esc(o.cat)+'">'+
+        '<div class="card-img" data-k="0"><img src="'+src(i,640)+'" srcset="'+src(i,640)+' 640w, '+src(i,1280)+' 1280w" sizes="(max-width:600px) 90vw, 400px" alt="'+esc(o.nom)+', fer forgé" loading="lazy">'+
+        '<span class="tag">'+esc(o.cat)+'</span><span class="status">Disponible</span>'+
+        (n>1?'<button class="cnav p" type="button" data-step="-1" aria-label="Photo précédente">'+ARROW.p+'</button><button class="cnav n" type="button" data-step="1" aria-label="Photo suivante">'+ARROW.n+'</button><div class="cdots">'+o.photos.map((_,k)=>'<i class="'+(k?'':'on')+'"></i>').join('')+'</div>':'')+
+        '</div><div class="card-body"><h3>'+esc(o.nom)+'</h3><p class="meta">'+(n>1?n+' photos':'Pièce unique')+'</p><button class="pill reserve-btn" type="button">Réserver cette pièce</button></div></article>';
+    }
+    const cardsEl=document.getElementById('cards');
+    cardsEl.innerHTML=OEUVRES.map(cardHTML).join('')+
+      '<article class="card sur-mesure" data-cat="*"><div class="card-img"><img src="img/feu.jpg" alt="" loading="lazy"><span class="tag">Sur mesure</span></div><div class="card-body"><h3>Votre projet</h3><p class="meta">Une idée, un croquis ou une dimension précise : Louis la forge.</p><a class="pill" href="#contact">Commander sur mesure ↗</a></div></article>';
+    document.getElementById('track').innerHTML=OEUVRES.filter(o=>o.avant).map(o=>
+      '<article class="slide"><img src="'+src(o.photos[0],640)+'" alt=""><div><h3>'+esc(o.nom)+'</h3><p>'+esc(o.cat)+(o.photos.length>1?' · '+o.photos.length+' photos':'')+'</p><a class="pill" href="#'+o.slug+'" data-open="'+o.slug+'">Voir la pièce</a></div></article>').join('');
+    OEUVRES.forEach(o=>{const c=cardsEl.querySelector('[data-slug="'+o.slug+'"]');if(c)c.id=o.slug});
+
+    /* Filtres par rubrique + « voir plus » + recherche */
+    const PAGE=12;let cat='Toutes',limit=PAGE,query='';
+    const catBar=document.getElementById('catFilters'),moreBtn=document.getElementById('moreBtn'),noResultEl=document.getElementById('noResult');
+    const normTxt=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    function renderFilters(){
+      catBar.innerHTML=['Toutes',...RUBRIQUES].map(r=>'<button type="button" aria-pressed="'+(r===cat)+'" data-cat="'+esc(r)+'">'+esc(r)+'<span>'+(r==='Toutes'?OEUVRES.length:OEUVRES.filter(o=>o.cat===r).length)+'</span></button>').join('');
+    }
+    function applyFilters(){
+      let shown=0,match=0;
+      cardsEl.querySelectorAll('.card').forEach(c=>{
+        if(c.dataset.cat==='*'){c.classList.toggle('hidden',!!query);return}
+        const ok=(cat==='Toutes'||c.dataset.cat===cat)&&(!query||normTxt(c.dataset.name+' '+c.dataset.cat).includes(query));
+        if(ok)match++;
+        const vis=ok&&(query||match<=limit);c.classList.toggle('hidden',!vis);if(vis)shown++;
+      });
+      moreBtn.parentElement.hidden=!!query||match<=limit;
+      noResultEl.classList.toggle('show',match===0);
+    }
+    catBar.addEventListener('click',e=>{const b=e.target.closest('button[data-cat]');if(!b)return;cat=b.dataset.cat;limit=PAGE;renderFilters();applyFilters()});
+    moreBtn.addEventListener('click',()=>{limit+=PAGE;applyFilters()});
+    renderFilters();applyFilters();
+
+    /* Carrousel dans chaque carte */
+    const byslug=Object.fromEntries(OEUVRES.map(o=>[o.slug,o]));
+    function showPhoto(card,k){
+      const o=byslug[card.dataset.slug];if(!o)return;const box=card.querySelector('.card-img'),n=o.photos.length;k=(k+n)%n;box.dataset.k=k;
+      const img=box.querySelector('img'),i=o.photos[k];img.src=src(i,640);img.srcset=src(i,640)+' 640w, '+src(i,1280)+' 1280w';
+      box.querySelectorAll('.cdots i').forEach((d,j)=>d.classList.toggle('on',j===k));
+    }
+    cardsEl.addEventListener('click',e=>{
+      const nav=e.target.closest('.cnav');const card=e.target.closest('.card');if(!card)return;
+      if(nav){e.stopPropagation();showPhoto(card,+card.querySelector('.card-img').dataset.k+ +nav.dataset.step);return}
+      if(e.target.closest('.card-img')&&card.dataset.slug)openLB(card.dataset.slug,+card.querySelector('.card-img').dataset.k);
+    });
+    let tx=null;
+    cardsEl.addEventListener('touchstart',e=>{if(e.target.closest('.card-img'))tx=e.touches[0].clientX},{passive:true});
+    cardsEl.addEventListener('touchend',e=>{const card=e.target.closest('.card');if(tx===null||!card||!card.dataset.slug)return;const dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>40)showPhoto(card,+card.querySelector('.card-img').dataset.k+(dx<0?1:-1))});
+
+    /* Visionneuse plein écran */
+    const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg'),lbCap=document.getElementById('lbCap');let lbO=null,lbK=0;
+    function lbShow(){const n=lbO.photos.length;lbK=(lbK+n)%n;lbImg.src=src(lbO.photos[lbK],1280);lbImg.alt=lbO.nom;lbCap.innerHTML='<b>'+esc(lbO.nom)+'</b>'+esc(lbO.cat)+(n>1?' · '+(lbK+1)+' / '+n:'');lb.querySelectorAll('.lb-prev,.lb-next').forEach(b=>b.hidden=n<2)}
+    function openLB(slug,k){lbO=byslug[slug];if(!lbO)return;lbK=k||0;lbShow();lb.classList.add('open');document.getElementById('lbClose').focus()}
+    const closeLB=()=>lb.classList.remove('open');
+    document.getElementById('lbClose').addEventListener('click',closeLB);
+    document.getElementById('lbPrev').addEventListener('click',()=>{lbK--;lbShow()});
+    document.getElementById('lbNext').addEventListener('click',()=>{lbK++;lbShow()});
+    lb.addEventListener('click',e=>{if(e.target===lb)closeLB()});
+    addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft'){lbK--;lbShow()}if(e.key==='ArrowRight'){lbK++;lbShow()}});
+    document.getElementById('track').addEventListener('click',e=>{const a=e.target.closest('[data-open]');if(!a)return;e.preventDefault();openLB(a.dataset.open,0)});
+
     document.getElementById('year').textContent=new Date().getFullYear();
 
     /* Menu mobile */
@@ -470,13 +566,8 @@
     go(0);restart();
 
     /* Recherche dans les créations */
-    const search=document.getElementById('searchInput'),cards=[...document.querySelectorAll('.cards .card')],noResult=document.getElementById('noResult');
-    const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
-    search.addEventListener('input',()=>{
-      const q=norm(search.value.trim());let shown=0;
-      cards.forEach(c=>{const ok=!q||norm(c.textContent).includes(q);c.classList.toggle('hidden',!ok);if(ok)shown++});
-      noResult.classList.toggle('show',shown===0);
-    });
+    const search=document.getElementById('searchInput');
+    search.addEventListener('input',()=>{query=normTxt(search.value.trim());applyFilters()});
     search.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('creations').scrollIntoView({behavior:reduced?'auto':'smooth'})}});
 
     /* FAQ : une seule question ouverte */
