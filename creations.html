@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>La collection — Ferrailles de Louis</title>
+  <meta name="description" content="Toutes les créations en fer forgé de Louis : animaux, personnages, instruments, croix occitanes, luminaires et plus, à réserver en ligne.">
+  <meta name="theme-color" content="#1b1c1a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+</head>
+<body class="concrete creations-page" data-page="creations">
+  <header class="page-head">
+      <header class="nav" id="nav">
+        <a class="brand" href="index.html" aria-label="Ferrailles de Louis — accueil"><img src="img/fdl-blanc.png" alt="Ferrailles de Louis"></a>
+        <nav class="links" id="links">
+          <a href="index.html#accueil">Accueil</a>
+          <a href="creations.html" class="active" aria-current="page">Créations</a>
+          <a href="index.html#savoir-faire">Savoir-faire</a>
+          <a href="index.html#a-propos">À propos</a>
+          <a href="index.html#contact">Contact</a>
+        </nav>
+        <div class="tools">
+          <label class="search" aria-label="Rechercher une création">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="searchInput" type="search" placeholder="Rechercher" autocomplete="off">
+          </label>
+          <a class="icon-btn optional" href="https://www.instagram.com/louisbestion/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>
+          </a>
+          <a class="icon-btn optional" href="tel:+33647387010" aria-label="Appeler Louis">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+          </a>
+          <a class="avatar" href="index.html#a-propos" aria-label="À propos de Louis"><img src="img/louis-avatar.jpg" alt=""></a>
+          <button class="icon-btn menu" id="menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="links">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg>
+          </button>
+        </div>
+      </header>
+    <div class="wrap page-intro">
+      <a class="crumb" href="index.html">← Retour à l’accueil</a>
+      <h1>La collection</h1>
+      <p><b data-nb>82</b> pièces uniques forgées à la main par Louis, dans son atelier de l’Aveyron. Choisissez un univers, ouvrez les photos en grand et réservez celle qui vous plaît.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel" id="creations">
+      <div class="wrap">
+        <div class="univers" id="univers" role="toolbar" aria-label="Filtrer par univers"></div>
+        <div class="gal-bar" id="galerie">
+          <h3 id="galTitle">Toutes les pièces</h3>
+          <button class="pill ghost" type="button" id="showAll" hidden>Voir toutes les pièces</button>
+        </div>
+        <p class="no-result" id="noResult">Aucune création ne correspond. <a href="index.html#contact">Demandez-la sur mesure →</a></p>
+        <div class="gallery" id="cards"></div>
+        <div class="more"><button class="pill" type="button" id="moreBtn">Voir plus de pièces</button></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="wrap after-cta">
+        <p class="eyebrow">Sur mesure</p>
+        <h2>Vous ne trouvez pas votre pièce ?</h2>
+        <p>Une idée, un croquis ou une dimension précise : Louis forge aussi des créations uniques sur commande.</p>
+        <a class="pill" href="index.html#contact">Parler de mon projet ↗</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="concrete">
+    <div class="f-left"><img src="img/fdl-blanc.png" alt="Ferrailles de Louis"><span>© <span id="year"></span> · Ferronnerie d’art en Aveyron</span></div>
+    <div class="f-right">
+      <a class="pill ghost" href="https://www.instagram.com/louisbestion/" target="_blank" rel="noopener">Instagram</a>
+      <a class="pill ghost" href="https://www.facebook.com/louis.bestion" target="_blank" rel="noopener">Facebook</a>
+    </div>
+  </footer>
+
+  <!-- ===== VISIONNEUSE ===== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photos de l’œuvre">
+    <figure><img id="lbImg" alt=""><figcaption><span id="lbCap"></span><span class="lb-actions"><button class="pill" type="button" id="lbReserve">Réserver cette pièce</button></span></figcaption></figure>
+    <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Fermer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <button class="lb-btn lb-prev" id="lbPrev" type="button" aria-label="Photo précédente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button class="lb-btn lb-next" id="lbNext" type="button" aria-label="Photo suivante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+
+  <!-- ===== MODAL DE RÉSERVATION ===== -->
+  <div class="modal" id="reserveModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-box"><div class="modal-top"><h3 id="modalTitle">Réserver une création</h3><button class="close" id="closeModal" type="button" aria-label="Fermer">×</button></div><p class="modal-sub">Vous souhaitez réserver : <strong id="pieceName">—</strong></p><div class="field"><label for="clientName">Votre nom</label><input id="clientName" type="text" autocomplete="name" required></div><div class="field"><label for="clientContact">E-mail ou téléphone</label><input id="clientContact" type="text" autocomplete="email" required></div><div class="field"><label for="clientMessage">Votre message (facultatif)</label><textarea id="clientMessage"></textarea></div><button class="submit" id="sendReservation" type="button">Confirmer la réservation</button><p class="form-msg" id="formMsg" role="status" aria-live="polite"></p></div></div>
+
+  <script src="js/oeuvres.js"></script>
+  <script src="js/site.js"></script>
+</body>
+</html>
