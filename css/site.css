@@ -404,5 +404,5 @@
     /* Grand écran : titre, sous-titre et carrousel décalés vers la gauche (le menu ne bouge pas) */
     @media(min-width:1300px){
       .hero-body{padding-right:clamp(52px,calc((100vw - 1300px) * .5 + 52px),380px)}
-      .hero-body .slider{margin-right:0;-webkit-mask-image:linear-gradient(90deg,#000 78%,transparent);mask-image:linear-gradient(90deg,#000 78%,transparent)}
+      .hero-body .slider{margin-right:calc(-1 * clamp(52px,calc((100vw - 1300px) * .5 + 52px),380px))}
     }
