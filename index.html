@@ -328,10 +328,29 @@
       .reveal{opacity:1;transform:none;transition:none}
       .track,.progress-fill{transition:none}
     }
-  </style>
+  
+    /* ===== Page d'un seul tenant : plus de blocs séparés ===== */
+    html{background:var(--concrete)}
+    body{background-color:var(--concrete)}
+    .frame{padding:0}
+    .hero{border-radius:0;min-height:max(680px,100svh)}
+    .hero-bg:after{background:linear-gradient(90deg,rgba(29,30,28,.1) 0%,rgba(29,30,28,.45) 42%,rgba(29,30,28,.88) 72%,rgba(29,30,28,.95) 100%),linear-gradient(180deg,rgba(29,30,28,.55) 0%,transparent 22%,transparent 62%,var(--concrete) 100%)}
+    .panel{margin:0;border-radius:0;overflow:visible;padding:clamp(56px,7vw,100px) 0;background-color:transparent}
+    .panel.concrete{background:none}
+    .quote{background:linear-gradient(180deg,var(--concrete) 0%,rgba(29,30,28,.82) 28%,rgba(29,30,28,.82) 72%,var(--concrete) 100%),url("img/feu.jpg") center/cover;padding-block:clamp(90px,11vw,150px)}
+    .faq{background:none;color:var(--text)}
+    .faq .eyebrow{color:var(--soft)}
+    .faq-list{gap:0;border-top:1px solid var(--glass-line)}
+    .faq details{border-radius:0;background:none;border:0;border-bottom:1px solid var(--glass-line)}
+    .faq summary{padding:22px 0}
+    .faq summary:after{background:var(--glass-strong);color:#fff;border:1px solid var(--glass-line)}
+    .faq details p{margin:-6px 50px 22px 0;color:var(--soft)}
+    footer{margin:0;border-radius:0;background:none;border-top:1px solid var(--glass-line);padding:30px max(24px,calc((100% - 1240px)/2))}
+    @media(max-width:600px){.frame{padding:0}.panel,footer{margin:0}footer{padding:28px 18px}}
+</style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
-<body>
+<body class="concrete">
   <!-- ===== HERO (reprend la maquette) ===== -->
   <div class="frame">
     <section class="hero" id="accueil">
