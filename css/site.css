@@ -393,3 +393,10 @@
     .cta-btn:hover{transform:translateY(-3px);background:var(--ember-2);box-shadow:0 24px 60px rgba(201,84,31,.45)}
     .cta-btn:hover .go{transform:translateX(4px)}
     @media(max-width:600px){.cta-btn{font-size:16px;min-height:58px;padding-left:22px}.cta-btn .go{width:40px;height:40px}}
+
+    /* Accès à l'Espace Louis */
+    .admin-pill{gap:8px;background:var(--ember);color:#fff}
+    .admin-pill svg{width:16px;height:16px}
+    .admin-pill:hover{background:#fff;color:var(--ink)}
+    footer .f-right{flex-wrap:wrap}
+    .admin-pill{white-space:nowrap}
