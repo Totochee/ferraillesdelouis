@@ -362,3 +362,20 @@
     .after-cta p{max-width:520px;margin:0;color:var(--soft)}
     @media(max-width:860px){.home-sel .card.big{grid-row:span 3}}
     @media(max-width:600px){.collection-cta{margin-top:40px;padding:26px 0}.home-sel{grid-template-columns:repeat(2,1fr)}.gallery .sur-mesure p{display:none}.gallery .sur-mesure .pill{min-height:36px;padding:0 12px;font-size:13px}}
+
+    /* ===== Savoir-faire : bandeau + frise (distinct de « À propos ») ===== */
+    .savoir{padding-block:0 clamp(60px,8vw,110px)}
+    .savoir-band{position:relative;isolation:isolate;display:grid;align-items:center;min-height:clamp(380px,48vw,620px)}
+    .savoir-band:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(rgba(29,30,28,.6),rgba(29,30,28,.6)),url("../img/forge-hero.jpg") 30% 30%/cover;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 20%,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 20%,#000 72%,transparent 100%)}
+    .savoir-title{display:grid;justify-items:center;text-align:center;gap:14px}
+    .savoir-title h2{font-size:clamp(44px,6.4vw,96px);font-weight:700;line-height:1;letter-spacing:-.03em;text-shadow:0 4px 30px rgba(0,0,0,.45)}
+    .savoir-title p:last-child{max-width:520px;margin:0;color:#e6e4de;font-size:clamp(16px,1.5vw,19px)}
+    .savoir-title .eyebrow{color:#e6e4de}
+    .savoir-line{list-style:none;margin:clamp(10px,2vw,30px) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(18px,3vw,40px);position:relative}
+    .savoir-line:before{content:"";position:absolute;left:0;right:0;top:21px;height:1px;background:linear-gradient(90deg,var(--ember),rgba(232,116,58,.15))}
+    .savoir-line li{position:relative;display:grid;gap:8px;align-content:start}
+    .savoir-line span{position:relative;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--concrete);border:1.5px solid var(--ember);color:var(--ember);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;margin-bottom:10px}
+    .savoir-line h3{font-size:21px;font-weight:600}
+    .savoir-line p{margin:0;color:var(--soft);font-size:15px}
+    @media(max-width:860px){.savoir-line{grid-template-columns:1fr 1fr;row-gap:34px}.savoir-line:before{display:none}}
+    @media(max-width:600px){.savoir-line{grid-template-columns:1fr}.savoir-line li{grid-template-columns:44px 1fr;column-gap:16px}.savoir-line span{grid-row:span 2;margin:0}}
