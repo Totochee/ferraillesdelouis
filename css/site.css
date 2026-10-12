@@ -400,3 +400,7 @@
     .admin-pill:hover{background:#fff;color:var(--ink)}
     footer .f-right{flex-wrap:wrap}
     .admin-pill{white-space:nowrap}
+
+    /* Grand écran : le contenu du haut reste dans une largeur maîtrisée */
+    .hero .nav,.hero-body{width:100%;max-width:1360px;margin-inline:auto}
+    @media(min-width:1500px){.hero-body{grid-template-columns:1fr minmax(0,620px)}}
