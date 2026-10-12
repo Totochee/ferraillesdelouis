@@ -430,3 +430,11 @@
     body.menu-open{overflow:hidden}
     @media(max-width:1100px){.links.open{display:none}.tools .desk-only{display:none}}
     @media(min-width:1101px){.mmenu{display:none!important}}
+
+    /* ===== Pièce réservée : grisée avec « Réservé » sur l'image ===== */
+    .card.is-reserved .card-img img{filter:grayscale(1) brightness(.55)}
+    .card.is-reserved .card-img:before{content:"Réservé";position:absolute;z-index:3;left:50%;top:42%;transform:translate(-50%,-50%) rotate(-6deg);padding:8px 22px;border:2px solid #fff;border-radius:10px;background:rgba(20,21,19,.55);color:#fff;font-size:clamp(18px,2vw,26px);font-weight:700;letter-spacing:.14em;text-transform:uppercase;pointer-events:none;white-space:nowrap}
+    .card.is-reserved .status{display:none}
+    .card.is-reserved .piece-info h3,.card.is-reserved .piece-info p{opacity:.75}
+    .card.is-reserved .reserve-btn{display:none}
+    .slide.is-reserved img{filter:grayscale(1) brightness(.6)}

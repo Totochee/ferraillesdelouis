@@ -179,10 +179,10 @@
   function initReservations(){
     let sb=null;try{sb=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null}catch(e){sb=null}
     const modal=$('reserveModal'),pieceName=$('pieceName');
-    const nameInput=$('clientName'),contactInput=$('clientContact'),messageInput=$('clientMessage');
+    const nameInput=$('clientName'),contactInput=$('clientContact'),phoneInput=$('clientPhone'),messageInput=$('clientMessage');
     const send=$('sendReservation'),out=$('formMsg');
     let currentSlug='',currentName='';
-    const markReserved=slug=>{const card=document.querySelector('.card[data-slug="'+slug+'"]');if(!card)return;card.classList.add('is-reserved');const st=card.querySelector('.status');if(st)st.textContent='Réservé';const b=card.querySelector('.reserve-btn');if(b)b.textContent='Déjà réservée'};
+    const markReserved=slug=>{document.querySelectorAll('.slide [data-open="'+slug+'"]').forEach(x=>x.closest('.slide').classList.add('is-reserved'));const card=document.querySelector('.card[data-slug="'+slug+'"]');if(!card)return;card.classList.add('is-reserved');const st=card.querySelector('.status');if(st)st.textContent='Réservé';const b=card.querySelector('.reserve-btn');if(b)b.textContent='Déjà réservée'};
     const close=()=>modal.classList.remove('open');
     $('closeModal').addEventListener('click',close);
     modal.addEventListener('click',e=>{if(e.target===modal)close()});
@@ -190,19 +190,20 @@
     document.querySelectorAll('.card[data-slug] .reserve-btn').forEach(button=>button.addEventListener('click',()=>{
       const card=button.closest('.card');if(card.classList.contains('is-reserved'))return;
       currentSlug=card.dataset.slug;currentName=card.dataset.name;
-      pieceName.textContent=currentName;nameInput.value='';contactInput.value='';messageInput.value='';out.textContent='';out.className='form-msg';send.disabled=false;modal.classList.add('open');setTimeout(()=>nameInput.focus(),40);
+      pieceName.textContent=currentName;nameInput.value='';contactInput.value='';phoneInput.value='';messageInput.value='';out.textContent='';out.className='form-msg';send.disabled=false;modal.classList.add('open');setTimeout(()=>nameInput.focus(),40);
     }));
     if(sb){
       sb.from('pieces').select('slug,reserved').then(({data})=>(data||[]).forEach(p=>{if(p.reserved)markReserved(p.slug)}),()=>{});
       try{sb.channel('pieces-live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'pieces'},payload=>{if(payload.new&&payload.new.reserved)markReserved(payload.new.slug)}).subscribe()}catch(e){}
     }
     send.addEventListener('click',async()=>{
-      const clientName=nameInput.value.trim(),clientContact=contactInput.value.trim(),clientMessage=messageInput.value.trim();
-      if(!clientName||!clientContact){out.className='form-msg error';out.textContent='Indiquez votre nom et un moyen de vous joindre.';return}
-      if(!sb){const subject=encodeURIComponent('Réservation — '+currentName),body=encodeURIComponent('Bonjour Louis,\n\nJe souhaite réserver : '+currentName+'.\n\nNom : '+clientName+'\nContact : '+clientContact+'\nMessage : '+clientMessage);location.href='mailto:louisbestion48@gmail.com?subject='+subject+'&body='+body;return}
+      const clientName=nameInput.value.trim(),clientContact=contactInput.value.trim(),clientPhone=phoneInput.value.trim(),clientMessage=messageInput.value.trim();
+      if(!clientName||!clientPhone){out.className='form-msg error';out.textContent='Indiquez votre nom et votre numéro de téléphone.';return}
+      if(clientPhone.replace(/[^0-9]/g,'').length<9){out.className='form-msg error';out.textContent='Vérifiez votre numéro de téléphone.';return}
+      if(!sb){const subject=encodeURIComponent('Réservation — '+currentName),body=encodeURIComponent('Bonjour Louis,\n\nJe souhaite réserver : '+currentName+'.\n\nNom : '+clientName+'\nTéléphone : '+clientPhone+'\nE-mail : '+clientContact+'\nMessage : '+clientMessage);location.href='mailto:louisbestion48@gmail.com?subject='+subject+'&body='+body;return}
       send.disabled=true;out.className='form-msg';out.textContent='Enregistrement en cours…';
       try{
-        const reservation=await sb.from('reservations').insert({piece_slug:currentSlug,name:clientName,contact:clientContact,message:clientMessage});if(reservation.error)throw reservation.error;
+        const reservation=await sb.from('reservations').insert({piece_slug:currentSlug,name:clientName,phone:clientPhone,contact:clientContact||clientPhone,message:clientMessage});if(reservation.error)throw reservation.error;
         const piece=await sb.from('pieces').update({reserved:true}).eq('slug',currentSlug);if(piece.error)throw piece.error;
         markReserved(currentSlug);out.className='form-msg ok';out.textContent='Réservation enregistrée. Louis vous recontactera rapidement.';setTimeout(close,1800);
       }catch(error){console.warn(error);send.disabled=false;out.className='form-msg error';out.textContent='La réservation n’a pas pu être envoyée. Vous pouvez contacter Louis directement.'}

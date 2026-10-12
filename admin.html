@@ -98,7 +98,7 @@
 
     async function load(){
       const [r,p]=await Promise.all([
-        sb.from('reservations').select('id,piece_slug,name,contact,message,created_at').order('created_at',{ascending:false}),
+        sb.from('reservations').select('id,piece_slug,name,phone,contact,message,created_at').order('created_at',{ascending:false}),
         sb.from('pieces').select('slug,name,reserved')
       ]);
       if(r.error||p.error){$('list').innerHTML='<div class="empty">Impossible de charger les réservations. Réessayez dans un instant.</div>';return}
@@ -114,7 +114,7 @@
         $('list').innerHTML=resas.length?resas.map(x=>{const o=bySlug[x.piece_slug];const nom=o?o.nom:((pieces.find(p=>p.slug===x.piece_slug)||{}).name||x.piece_slug);
           return '<article class="resa" data-id="'+x.id+'" data-slug="'+esc(x.piece_slug)+'"><img src="'+photo(x.piece_slug)+'" alt="">'+
           '<div><span class="when">'+dateFr(x.created_at)+'</span><h3>'+esc(nom)+(isRes(x.piece_slug)?'<span class="badge">Réservée</span>':'<span class="badge free">Remise en vente</span>')+'</h3>'+
-          '<p class="who"><b>'+esc(x.name)+'</b> · '+contactLink(x.contact)+'</p>'+(x.message?'<p class="note">'+esc(x.message)+'</p>':'')+'</div>'+
+          '<p class="who"><b>'+esc(x.name)+'</b>'+(x.phone?' · '+contactLink(x.phone):'')+(x.contact&&x.contact!==x.phone?' · '+contactLink(x.contact):'')+'</p>'+(x.message?'<p class="note">'+esc(x.message)+'</p>':'')+'</div>'+
           '<div class="acts">'+(isRes(x.piece_slug)?'<button type="button" data-act="free">Remettre en vente</button>':'')+
           (confirmId===x.id?'<button type="button" class="warn" data-act="del-ok">Confirmer la suppression</button><button type="button" data-act="del-no">Annuler</button>':'<button type="button" class="warn" data-act="del">Supprimer la demande</button>')+'</div></article>'}).join('')
           :'<div class="empty">Aucune réservation pour le moment.</div>';
