@@ -1,5 +1,6 @@
 # Empêche la base Supabase (offre gratuite) de se mettre en pause après 7 jours sans activité :
 # une petite lecture publique de la table des pièces tous les 3 jours.
+# La clé « publishable » est publique par nature (elle est aussi dans le site) : ce n’est pas un secret.
 name: Garder Supabase actif
 on:
   schedule:
@@ -12,5 +13,4 @@ jobs:
       - name: Lecture de la table pieces
         run: |
           curl -fsS "https://ficpgpduwkgdqcfgjtdi.supabase.co/rest/v1/pieces?select=slug&limit=1" \
-            -H "apikey: sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk" \
-            -H "Authorization: Bearer sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk"
+            -H "apikey: sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk"
