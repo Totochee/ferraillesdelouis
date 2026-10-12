@@ -408,3 +408,25 @@
     }
     /* Grand écran : titre et sous-titre plus présents pour remplir l'espace */
     @media(min-width:1600px){.hero-body{grid-template-columns:1fr minmax(0,min(46vw,860px))}.hero h1{font-size:clamp(84px,5.3vw,106px);white-space:nowrap}.hero-lead{font-size:19px;max-width:480px}.hero-right{justify-content:center}}
+
+    /* ===== Menu téléphone (plein écran) ===== */
+    .mmenu{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) 22px calc(22px + env(safe-area-inset-bottom,0px));background:rgba(21,22,20,.97);backdrop-filter:blur(18px);overflow-y:auto;opacity:0;transform:translateY(-8px);transition:opacity .25s,transform .25s}
+    .mmenu[hidden]{display:none}
+    .mmenu.open{opacity:1;transform:none}
+    .mmenu-top{display:flex;align-items:center;justify-content:space-between}
+    .mmenu-top .brand img{height:44px}
+    .mmenu-links{list-style:none;margin:28px 0 0;padding:0;counter-reset:m}
+    .mmenu-links li{counter-increment:m;border-bottom:1px solid var(--glass-line)}
+    .mmenu-links a{display:flex;align-items:baseline;gap:14px;padding:16px 0;text-decoration:none;font-size:clamp(30px,9vw,40px);font-weight:700;letter-spacing:-.02em;color:var(--text)}
+    .mmenu-links a:before{content:"0" counter(m);font-size:13px;font-weight:600;color:var(--ember);font-variant-numeric:tabular-nums}
+    .mmenu-links a[aria-current="page"]{color:var(--ember)}
+    .mmenu-foot{margin-top:auto;padding-top:28px;display:grid;gap:16px}
+    .mmenu-private{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border-radius:999px;background:var(--ember);color:#fff;text-decoration:none;font-size:17px;font-weight:700}
+    .mmenu-private svg{width:20px;height:20px}
+    .mmenu-contact{display:flex;gap:10px}
+    .mmenu-contact a{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;min-width:50px;padding:0 16px;border-radius:999px;background:var(--glass-strong);border:1px solid var(--glass-line);color:var(--text);text-decoration:none;font-weight:600;font-size:15px}
+    .mmenu-contact a:first-child{flex:1}
+    .mmenu-contact svg{width:20px;height:20px;flex:none}
+    body.menu-open{overflow:hidden}
+    @media(max-width:1100px){.links.open{display:none}.tools .desk-only{display:none}}
+    @media(min-width:1101px){.mmenu{display:none!important}}

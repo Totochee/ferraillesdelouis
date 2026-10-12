@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>Espace Louis — Réservations</title>
+  <title>Espace privé — Ferrailles de Louis</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -59,10 +59,10 @@
 
     <!-- Connexion -->
     <section id="loginView" hidden>
-      <h1>Espace Louis</h1>
+      <h1>Espace privé</h1>
       <p class="sub">Connectez-vous pour voir les réservations.</p>
       <form class="login" id="loginForm">
-        <label for="email">Identifiant (adresse e-mail)<input id="email" type="email" autocomplete="username" required></label>
+        <label for="email">Identifiant<input id="email" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
         <label for="password">Mot de passe<input id="password" type="password" autocomplete="current-password" required></label>
         <button type="submit" id="loginBtn">Se connecter</button>
         <p class="msg" id="loginMsg" role="status" aria-live="polite"></p>
@@ -137,7 +137,9 @@
 
     $('loginForm').addEventListener('submit',async e=>{
       e.preventDefault();$('loginBtn').disabled=true;$('loginMsg').className='msg';$('loginMsg').textContent='Connexion…';
-      const {error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+      /* un identifiant simple (ex. lbestion48) correspond au compte lbestion48@ferraillesdelouis.fr ; une adresse e-mail complète marche aussi */
+      const id=$('email').value.trim().toLowerCase();const email=id.includes('@')?id:id+'@ferraillesdelouis.fr';
+      const {error}=await sb.auth.signInWithPassword({email,password:$('password').value});
       $('loginBtn').disabled=false;
       if(error){$('loginMsg').className='msg err';$('loginMsg').textContent='Identifiant ou mot de passe incorrect.';return}
       $('password').value='';$('loginMsg').textContent='';
@@ -146,7 +148,7 @@
 
     sb.auth.onAuthStateChange((_ev,session)=>{
       show(!!session);
-      if(session){$('hello').textContent='Connecté en tant que '+session.user.email+'.';load()}
+      if(session){$('hello').textContent='Connecté en tant que '+session.user.email.replace('@ferraillesdelouis.fr','')+'.';load()}
     });
   })();
   </script>

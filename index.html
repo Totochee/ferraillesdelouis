@@ -38,9 +38,9 @@
           <a class="icon-btn optional" href="tel:+33647387010" aria-label="Appeler Louis">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
           </a>
-          <a class="icon-btn" href="admin.html" aria-label="Espace Louis (accès réservé)" title="Espace Louis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></a>
+          <a class="icon-btn desk-only" href="admin.html" aria-label="Espace privé" title="Espace privé"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></a>
           <a class="avatar" href="#a-propos" aria-label="À propos de Louis"><img src="img/louis-avatar.jpg" alt=""></a>
-          <button class="icon-btn menu" id="menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="links">
+          <button class="icon-btn menu" id="menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mmenu">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg>
           </button>
         </div>
@@ -189,9 +189,27 @@
     <div class="f-right">
       <a class="pill ghost" href="https://www.instagram.com/louisbestion/" target="_blank" rel="noopener">Instagram</a>
       <a class="pill ghost" href="https://www.facebook.com/louis.bestion" target="_blank" rel="noopener">Facebook</a>
-      <a class="pill admin-pill" href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>Espace Louis</a>
+      <a class="pill admin-pill" href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>Espace privé</a>
     </div>
   </footer>
+
+
+  <!-- ===== MENU TÉLÉPHONE ===== -->
+  <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+    <div class="mmenu-top">
+      <a class="brand" href="#accueil"><img src="img/fdl-blanc.png" alt="Ferrailles de Louis"></a>
+      <button class="icon-btn" id="mmenuClose" type="button" aria-label="Fermer le menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <nav aria-label="Menu principal"><ol class="mmenu-links"><li><a href="#accueil">Accueil</a></li><li><a href="creations.html">Créations</a></li><li><a href="#savoir-faire">Savoir-faire</a></li><li><a href="#a-propos">À propos</a></li><li><a href="#contact">Contact</a></li></ol></nav>
+    <div class="mmenu-foot">
+      <a class="mmenu-private" href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg><span>Espace privé</span></a>
+      <div class="mmenu-contact">
+        <a href="tel:+33647387010"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span>06 47 38 70 10</span></a>
+        <a href="https://www.instagram.com/louisbestion/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg></a>
+        <a href="https://www.facebook.com/louis.bestion" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3.2h-3V8.3c0-.9.3-1.6 1.6-1.6h1.6V3.9c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.4H7.6v3.2h2.7V21h3.2z"/></svg></a>
+      </div>
+    </div>
+  </div>
 
   <!-- ===== VISIONNEUSE ===== -->
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photos de l’œuvre">

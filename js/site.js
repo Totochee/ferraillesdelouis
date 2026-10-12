@@ -141,11 +141,16 @@
 
   /* ---------- Menu, lien actif, année ---------- */
   $('year').textContent=new Date().getFullYear();
-  const menu=$('menu'),links=$('links');
-  const setMenu=open=>{links.classList.toggle('open',open);menu.setAttribute('aria-expanded',open);menu.setAttribute('aria-label',open?'Fermer le menu':'Ouvrir le menu')};
-  menu.addEventListener('click',e=>{e.stopPropagation();setMenu(!links.classList.contains('open'))});
-  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
-  document.addEventListener('click',e=>{if(!links.contains(e.target))setMenu(false)});
+  const menu=$('menu'),links=$('links'),mm=$('mmenu');
+  const setMenu=open=>{
+    menu.setAttribute('aria-expanded',open);document.body.classList.toggle('menu-open',open);
+    if(open){mm.hidden=false;requestAnimationFrame(()=>mm.classList.add('open'));setTimeout(()=>$('mmenuClose').focus(),60)}
+    else{mm.classList.remove('open');setTimeout(()=>{if(!mm.classList.contains('open'))mm.hidden=true},250)}
+  };
+  menu.addEventListener('click',()=>setMenu(true));
+  $('mmenuClose').addEventListener('click',()=>{setMenu(false);menu.focus()});
+  mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+  addEventListener('keydown',e=>{if(e.key==='Escape'&&!mm.hidden)setMenu(false)});
   if(!IS_CREATIONS){
     const navItems=[...links.querySelectorAll('a[href^="#"]')];
     const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)navItems.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-40% 0px -55%'});
