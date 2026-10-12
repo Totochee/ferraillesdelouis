@@ -120,7 +120,7 @@
     $('slideTotal').textContent=pad(slides.length);
     let index=0,timer=null;
     const go=i=>{index=(i+slides.length)%slides.length;const gap=parseFloat(getComputedStyle(track).gap)||0;track.style.transform='translateX(-'+(slides[0].offsetWidth+gap)*index+'px)';slides.forEach((s,k)=>s.classList.toggle('current',k===index));fill.style.width=((index+1)/slides.length*100)+'%';now.textContent=pad(index+1)};
-    const restart=()=>{clearInterval(timer);if(!reduced)timer=setInterval(()=>go(index+1),6000)};
+    const restart=()=>{clearInterval(timer);if(!reduced)timer=setInterval(()=>go(index+1),3500)};
     $('next').addEventListener('click',()=>{go(index+1);restart()});
     $('prev').addEventListener('click',()=>{go(index-1);restart()});
     track.addEventListener('mouseenter',()=>clearInterval(timer));
