@@ -403,6 +403,8 @@
 
     /* Grand écran : titre, sous-titre et carrousel décalés vers la gauche (le menu ne bouge pas) */
     @media(min-width:1300px){
-      .hero-body{padding-right:clamp(52px,calc((100vw - 1300px) * .5 + 52px),380px)}
-      .hero-body .slider{margin-right:calc(-1 * clamp(52px,calc((100vw - 1300px) * .5 + 52px),380px))}
+      .hero-body{padding-right:clamp(52px,calc((100vw - 1300px) * .3 + 52px),260px)}
+      .hero-body .slider{margin-right:calc(-1 * clamp(52px,calc((100vw - 1300px) * .3 + 52px),260px))}
     }
+    /* Grand écran : titre et sous-titre plus présents pour remplir l'espace */
+    @media(min-width:1600px){.hero-body{grid-template-columns:1fr minmax(0,min(46vw,860px))}.hero h1{font-size:clamp(84px,5.3vw,106px);white-space:nowrap}.hero-lead{font-size:19px;max-width:480px}.hero-right{justify-content:center}}

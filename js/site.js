@@ -109,27 +109,34 @@
   lb.addEventListener('click',e=>{if(e.target===lb)closeLB()});
   addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft'){lbK--;lbShow()}if(e.key==='ArrowRight'){lbK++;lbShow()}});
 
-  /* ---------- Carrousel de l'accueil ---------- */
+  /* ---------- Carrousel de l'accueil (en boucle : après la 7e pièce revient la 1re) ---------- */
   const track=$('track');
   if(track){
-    track.innerHTML=OEUVRES.filter(o=>o.avant).map(o=>
-      '<article class="slide"><img src="'+src(o.photos[0],640)+'" alt=""><div><h3>'+esc(o.nom)+'</h3><p>'+esc(o.cat)+(o.photos.length>1?' · '+o.photos.length+' photos':'')+'</p><a class="pill" href="#'+o.slug+'" data-open="'+o.slug+'">Voir la pièce</a></div></article>').join('');
+    const feat=OEUVRES.filter(o=>o.avant);const N=feat.length;
+    const slideHTML=o=>'<article class="slide"><img src="'+src(o.photos[0],640)+'" alt=""><div><h3>'+esc(o.nom)+'</h3><p>'+esc(o.cat)+(o.photos.length>1?' · '+o.photos.length+' photos':'')+'</p><a class="pill" href="#'+o.slug+'" data-open="'+o.slug+'">Voir la pièce</a></div></article>';
+    /* trois copies de la série : on circule dans celle du milieu, les autres remplissent les côtés */
+    track.innerHTML=[0,1,2].map(()=>feat.map(slideHTML).join('')).join('');
+    [...track.children].forEach((el,k)=>{if(k<N||k>=2*N)el.setAttribute('aria-hidden','true')});
     track.addEventListener('click',e=>{const a=e.target.closest('[data-open]');if(!a)return;e.preventDefault();openLB(a.dataset.open,0)});
     const slides=[...track.children],fill=$('progressFill'),now=$('slideNow');
     const pad=n=>String(n).padStart(2,'0');
-    $('slideTotal').textContent=pad(slides.length);
-    let index=0,timer=null;
-    const go=i=>{index=(i+slides.length)%slides.length;const gap=parseFloat(getComputedStyle(track).gap)||0;track.style.transform='translateX(-'+(slides[0].offsetWidth+gap)*index+'px)';slides.forEach((s,k)=>s.classList.toggle('current',k===index));fill.style.width=((index+1)/slides.length*100)+'%';now.textContent=pad(index+1)};
-    const restart=()=>{clearInterval(timer);if(!reduced)timer=setInterval(()=>go(index+1),3500)};
-    $('next').addEventListener('click',()=>{go(index+1);restart()});
-    $('prev').addEventListener('click',()=>{go(index-1);restart()});
+    $('slideTotal').textContent=pad(N);
+    let pos=N,timer=null,busy=false;
+    const step=()=>slides[0].offsetWidth+(parseFloat(getComputedStyle(track).gap)||0);
+    const place=(animate)=>{track.style.transition=animate?'':'none';track.style.transform='translateX(-'+step()*pos+'px)';
+      const k=((pos%N)+N)%N;slides.forEach((s,j)=>s.classList.toggle('current',j===pos));fill.style.width=((k+1)/N*100)+'%';now.textContent=pad(k+1);
+      if(!animate){void track.offsetWidth;track.style.transition=''}};
+    const go=d=>{if(busy)return;busy=true;pos+=d;place(true);setTimeout(()=>{if(pos>=2*N)pos-=N;else if(pos<N)pos+=N;place(false);busy=false},reduced?0:600)};
+    const restart=()=>{clearInterval(timer);if(!reduced)timer=setInterval(()=>go(1),3500)};
+    $('next').addEventListener('click',()=>{go(1);restart()});
+    $('prev').addEventListener('click',()=>{go(-1);restart()});
     track.addEventListener('mouseenter',()=>clearInterval(timer));
     track.addEventListener('mouseleave',restart);
     let startX=null;
     track.addEventListener('touchstart',e=>{startX=e.touches[0].clientX},{passive:true});
-    track.addEventListener('touchend',e=>{if(startX===null)return;const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>40){go(index+(dx<0?1:-1));restart()}startX=null});
-    addEventListener('resize',()=>go(index));
-    go(0);restart();
+    track.addEventListener('touchend',e=>{if(startX===null)return;const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>40){go(dx<0?1:-1);restart()}startX=null});
+    addEventListener('resize',()=>place(false));
+    place(false);restart();
   }
 
   /* ---------- Menu, lien actif, année ---------- */
