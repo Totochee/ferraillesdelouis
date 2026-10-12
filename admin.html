@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Espace Louis — Réservations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+  <style>
+    .admin{width:min(1000px,calc(100% - 36px));margin:auto;padding-block:28px 80px}
+    .admin-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:22px;border-bottom:1px solid var(--glass-line)}
+    .admin-top img{height:48px;width:auto}
+    .admin h1{font-size:clamp(34px,4.6vw,56px);font-weight:700;letter-spacing:-.02em;margin:40px 0 8px}
+    .admin .sub{margin:0 0 28px;color:var(--soft)}
+    .login{max-width:420px;display:grid;gap:14px;margin-top:20px}
+    .login label{display:grid;gap:6px;font-size:14px;font-weight:600;color:var(--soft)}
+    .login input{width:100%;min-height:50px;padding:0 16px;border-radius:14px;border:1px solid var(--glass-line);background:var(--glass);color:var(--text);font:16px "Urbanist",sans-serif}
+    .login input:focus{outline:2px solid var(--ember);outline-offset:1px}
+    .login button{min-height:52px;border:0;border-radius:999px;background:var(--ember);color:#fff;font:700 16px "Urbanist",sans-serif;cursor:pointer}
+    .login button:disabled{opacity:.6}
+    .msg{min-height:22px;margin:0;font-size:14px;color:var(--soft)}
+    .msg.err{color:#ff9b85}
+    .stats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+    .stats span{padding:8px 14px;border-radius:999px;background:var(--glass);border:1px solid var(--glass-line);font-size:14px;color:var(--soft)}
+    .stats b{color:var(--text)}
+    .tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+    .tabs button{min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--glass-line);background:var(--glass);color:var(--soft);font:600 14px "Urbanist",sans-serif;cursor:pointer}
+    .tabs button[aria-pressed="true"]{background:#fff;color:var(--ink);border-color:#fff}
+    .list{display:grid;gap:12px}
+    .resa{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:18px;align-items:center;padding:14px;border-radius:18px;background:var(--glass);border:1px solid var(--glass-line)}
+    .resa img{width:96px;height:96px;object-fit:cover;border-radius:12px;background:#111}
+    .resa h3{font-size:19px;font-weight:600}
+    .resa .when{font-size:13px;color:var(--muted)}
+    .resa .who{margin:6px 0 0;font-size:15px}
+    .resa .who a{color:var(--ember);font-weight:600;overflow-wrap:anywhere}
+    .resa .note{margin:6px 0 0;color:var(--soft);font-size:14px;white-space:pre-wrap}
+    .resa .acts{display:grid;gap:8px;justify-items:end}
+    .resa .acts button{min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--glass-line);background:var(--glass-strong);color:var(--text);font:600 13px "Urbanist",sans-serif;cursor:pointer;white-space:nowrap}
+    .resa .acts button.warn{color:#ffb4a3}
+    .resa .acts button.ok{background:#fff;color:var(--ink)}
+    .badge{display:inline-block;margin-left:8px;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--ember);color:#fff;vertical-align:middle}
+    .badge.free{background:#2f7a47}
+    .empty{padding:30px;border:1px dashed var(--glass-line);border-radius:18px;color:var(--soft);text-align:center}
+    .linkbtn{background:none;border:1px solid var(--glass-line);color:var(--soft);border-radius:999px;min-height:40px;padding:0 16px;font:600 14px "Urbanist",sans-serif;cursor:pointer}
+    @media(max-width:640px){.resa{grid-template-columns:72px minmax(0,1fr)}.resa img{width:72px;height:72px}.resa .acts{grid-column:1/-1;justify-items:stretch;grid-template-columns:1fr 1fr}}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+<body class="concrete">
+  <div class="admin">
+    <div class="admin-top">
+      <a href="index.html"><img src="img/fdl-blanc.png" alt="Ferrailles de Louis"></a>
+      <button class="linkbtn" id="logout" type="button" hidden>Se déconnecter</button>
+    </div>
+
+    <!-- Connexion -->
+    <section id="loginView" hidden>
+      <h1>Espace Louis</h1>
+      <p class="sub">Connectez-vous pour voir les réservations.</p>
+      <form class="login" id="loginForm">
+        <label for="email">Identifiant (adresse e-mail)<input id="email" type="email" autocomplete="username" required></label>
+        <label for="password">Mot de passe<input id="password" type="password" autocomplete="current-password" required></label>
+        <button type="submit" id="loginBtn">Se connecter</button>
+        <p class="msg" id="loginMsg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- Réservations -->
+    <section id="adminView" hidden>
+      <h1>Réservations</h1>
+      <p class="sub" id="hello"></p>
+      <div class="stats" id="stats"></div>
+      <div class="tabs" role="toolbar" aria-label="Afficher">
+        <button type="button" data-tab="resa" aria-pressed="true">Demandes reçues</button>
+        <button type="button" data-tab="reserved" aria-pressed="false">Pièces réservées</button>
+      </div>
+      <div class="list" id="list"></div>
+      <p class="msg" id="actMsg" role="status" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <script src="js/oeuvres.js"></script>
+  <script>
+  (function(){
+    const sb=supabase.createClient('https://ficpgpduwkgdqcfgjtdi.supabase.co','sb_publishable_D7hHj4K2Y1bVn2hIHA8HAA__ZcT0sPk');
+    const $=id=>document.getElementById(id);
+    const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const bySlug=Object.fromEntries(OEUVRES.map(o=>[o.slug,o]));
+    const photo=slug=>bySlug[slug]?'img/oeuvres/'+bySlug[slug].photos[0]+'-640.jpg':'img/fdl-blanc.png';
+    const dateFr=d=>new Date(d).toLocaleString('fr-FR',{dateStyle:'long',timeStyle:'short'});
+    let resas=[],pieces=[],tab='resa',confirmId=null;
+
+    function show(logged){$('loginView').hidden=logged;$('adminView').hidden=!logged;$('logout').hidden=!logged}
+
+    async function load(){
+      const [r,p]=await Promise.all([
+        sb.from('reservations').select('id,piece_slug,name,contact,message,created_at').order('created_at',{ascending:false}),
+        sb.from('pieces').select('slug,name,reserved')
+      ]);
+      if(r.error||p.error){$('list').innerHTML='<div class="empty">Impossible de charger les réservations. Réessayez dans un instant.</div>';return}
+      resas=r.data;pieces=p.data;render();
+    }
+    function contactLink(c){c=String(c||'').trim();if(c.includes('@'))return '<a href="mailto:'+esc(c)+'">'+esc(c)+'</a>';const t=c.replace(/[^\d+]/g,'');return t.length>=8?'<a href="tel:'+esc(t)+'">'+esc(c)+'</a>':esc(c)}
+    function render(){
+      const reserved=pieces.filter(p=>p.reserved);
+      $('stats').innerHTML='<span><b>'+resas.length+'</b> demande'+(resas.length>1?'s':'')+'</span><span><b>'+reserved.length+'</b> pièce'+(reserved.length>1?'s':'')+' réservée'+(reserved.length>1?'s':'')+'</span>';
+      document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab===tab));
+      const isRes=s=>(pieces.find(p=>p.slug===s)||{}).reserved;
+      if(tab==='resa'){
+        $('list').innerHTML=resas.length?resas.map(x=>{const o=bySlug[x.piece_slug];const nom=o?o.nom:((pieces.find(p=>p.slug===x.piece_slug)||{}).name||x.piece_slug);
+          return '<article class="resa" data-id="'+x.id+'" data-slug="'+esc(x.piece_slug)+'"><img src="'+photo(x.piece_slug)+'" alt="">'+
+          '<div><span class="when">'+dateFr(x.created_at)+'</span><h3>'+esc(nom)+(isRes(x.piece_slug)?'<span class="badge">Réservée</span>':'<span class="badge free">Remise en vente</span>')+'</h3>'+
+          '<p class="who"><b>'+esc(x.name)+'</b> · '+contactLink(x.contact)+'</p>'+(x.message?'<p class="note">'+esc(x.message)+'</p>':'')+'</div>'+
+          '<div class="acts">'+(isRes(x.piece_slug)?'<button type="button" data-act="free">Remettre en vente</button>':'')+
+          (confirmId===x.id?'<button type="button" class="warn" data-act="del-ok">Confirmer la suppression</button><button type="button" data-act="del-no">Annuler</button>':'<button type="button" class="warn" data-act="del">Supprimer la demande</button>')+'</div></article>'}).join('')
+          :'<div class="empty">Aucune réservation pour le moment.</div>';
+      }else{
+        $('list').innerHTML=reserved.length?reserved.map(p=>{const o=bySlug[p.slug];
+          return '<article class="resa" data-slug="'+esc(p.slug)+'"><img src="'+photo(p.slug)+'" alt=""><div><h3>'+esc(o?o.nom:p.name)+'</h3><p class="note">'+esc(o?o.cat:'')+'</p></div><div class="acts"><button type="button" class="ok" data-act="free">Remettre en vente</button></div></article>'}).join('')
+          :'<div class="empty">Aucune pièce n’est réservée.</div>';
+      }
+    }
+
+    document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;tab=b.dataset.tab;confirmId=null;render()});
+    $('list').addEventListener('click',async e=>{
+      const b=e.target.closest('button[data-act]');if(!b)return;const card=b.closest('.resa');const act=b.dataset.act;$('actMsg').textContent='';$('actMsg').className='msg';
+      if(act==='del'){confirmId=card.dataset.id;return render()}
+      if(act==='del-no'){confirmId=null;return render()}
+      b.disabled=true;
+      if(act==='del-ok'){const {error}=await sb.from('reservations').delete().eq('id',card.dataset.id);confirmId=null;if(error){$('actMsg').className='msg err';$('actMsg').textContent='La suppression n’a pas fonctionné.'}else $('actMsg').textContent='Demande supprimée.';return load()}
+      if(act==='free'){const {error}=await sb.from('pieces').update({reserved:false}).eq('slug',card.dataset.slug);if(error){$('actMsg').className='msg err';$('actMsg').textContent='Impossible de remettre la pièce en vente.'}else $('actMsg').textContent='La pièce est de nouveau disponible sur le site.';return load()}
+    });
+
+    $('loginForm').addEventListener('submit',async e=>{
+      e.preventDefault();$('loginBtn').disabled=true;$('loginMsg').className='msg';$('loginMsg').textContent='Connexion…';
+      const {error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+      $('loginBtn').disabled=false;
+      if(error){$('loginMsg').className='msg err';$('loginMsg').textContent='Identifiant ou mot de passe incorrect.';return}
+      $('password').value='';$('loginMsg').textContent='';
+    });
+    $('logout').addEventListener('click',()=>sb.auth.signOut());
+
+    sb.auth.onAuthStateChange((_ev,session)=>{
+      show(!!session);
+      if(session){$('hello').textContent='Connecté en tant que '+session.user.email+'.';load()}
+    });
+  })();
+  </script>
+</body>
+</html>
