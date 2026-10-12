@@ -1,0 +1,12 @@
+{
+  "name": "Ferrailles de Louis",
+  "short_name": "Ferrailles",
+  "start_url": "/",
+  "display": "browser",
+  "theme_color": "#1b1c1a",
+  "background_color": "#1d1e1c",
+  "icons": [
+    {"src": "/img/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/img/icons/icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
