@@ -31,6 +31,8 @@
       return IS_CREATIONS?'<button class="univ" type="button" data-cat="'+esc(r)+'" aria-pressed="false">'+inner+'</button>':'<a class="univ" href="creations.html#'+slugify(r)+'">'+inner+'</a>'}).join('');
   }
   if($('nbPieces'))$('nbPieces').textContent=OEUVRES.length;
+  const thumbs=$('ctaThumbs');
+  if(thumbs){const pick=OEUVRES.filter(o=>!o.avant);const step=Math.max(1,Math.floor(pick.length/6));thumbs.innerHTML=[0,1,2,3,4,5].map(k=>pick[k*step]).filter(Boolean).map(o=>'<img src="'+src(o.photos[0],640)+'" alt="" loading="lazy">').join('')}
   document.querySelectorAll('[data-nb]').forEach(e=>e.textContent=OEUVRES.length);
 
   /* ---------- Galerie ---------- */
