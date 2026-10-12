@@ -401,6 +401,5 @@
     footer .f-right{flex-wrap:wrap}
     .admin-pill{white-space:nowrap}
 
-    /* Grand écran : le contenu du haut reste dans une largeur maîtrisée */
-    .hero .nav,.hero-body{width:100%;max-width:1360px;margin-inline:auto}
-    @media(min-width:1500px){.hero-body{grid-template-columns:1fr minmax(0,620px)}}
+    /* Grand écran : seul le titre se décale vers la gauche */
+    @media(min-width:1300px){.hero h1{white-space:nowrap;transform:translateX(calc(-1 * clamp(0px,calc((100vw - 1300px) * .45),300px)))}}
