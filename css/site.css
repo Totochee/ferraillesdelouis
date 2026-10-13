@@ -460,7 +460,7 @@
     /* ===== Crédit TBSN groupe ===== */
     footer{flex-wrap:wrap}
     footer .credit{flex-basis:100%;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:6px;padding-top:18px;border-top:1px solid var(--glass-line);font-size:12px;color:var(--muted);text-decoration:none;opacity:.8;transition:opacity .2s,color .2s}
-    footer .credit img{height:14px;width:auto}
-    footer .credit b{font-weight:600;color:var(--soft)}
+    footer .credit .tbsn{font-family:"Space Grotesk",sans-serif;font-size:15px;font-weight:700;letter-spacing:-.3px;color:#eaf0f8;white-space:nowrap}
+    footer .credit .tbsn span{color:#ff5a1f}
     footer .credit:hover{opacity:1;color:var(--soft)}
     @media(max-width:860px){footer .credit{align-self:stretch;justify-content:flex-start;padding-right:64px}}
