@@ -475,11 +475,10 @@
     .cookies-btn{min-height:46px;border-radius:999px;border:1px solid var(--glass-line);background:var(--glass-strong);color:#fff;font:700 15px "Urbanist",sans-serif;cursor:pointer;transition:background .2s,color .2s}
     .cookies-btn:hover{background:#fff;color:var(--ink)}
     @media(max-width:600px){.cookies{left:12px;right:12px;width:auto;padding:18px}}
-    footer .f-legal{flex-basis:100%;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font-size:13px}
+    footer .f-legal{flex:1;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font-size:13px}
     footer .f-legal a{color:var(--muted);text-decoration:none}
     footer .f-legal a:hover{color:#fff;text-decoration:underline}
-    footer .f-legal + .credit{margin-top:0}
-    @media(max-width:860px){footer .f-legal{justify-content:flex-start}}
+    @media(max-width:860px){footer .f-legal{flex:none;align-self:stretch;justify-content:flex-start;order:3}footer .f-right{order:2}footer .credit{order:4}}
     /* ===== Page confidentialité ===== */
     .legal{max-width:780px}
     .legal h2{font-size:clamp(24px,2.6vw,32px);font-weight:700;letter-spacing:-.01em;margin:44px 0 12px}
@@ -494,3 +493,5 @@
     .legal .maj{font-size:14px;color:var(--muted)}
     @media(max-width:600px){.legal table,.legal tbody,.legal tr,.legal td,.legal th{display:block}.legal thead{display:none}.legal tr{padding:10px 0;border-bottom:1px solid var(--glass-line)}.legal td{border:0;padding:2px 0}}
     .legal td:first-child,.legal td:last-child{white-space:nowrap}
+    footer .f-legal a{white-space:nowrap}
+    @media(min-width:861px) and (max-width:1250px){footer .f-legal{order:3;flex-basis:100%}footer .credit{order:4}}
