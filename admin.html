@@ -74,7 +74,12 @@
     .ph .tools .rm{background:rgba(160,40,20,.85)}
     .add-ph{display:grid;place-items:center;align-content:center;gap:6px;aspect-ratio:1;border-radius:14px;border:2px dashed var(--glass-line);color:var(--soft);cursor:pointer;text-align:center;font-size:14px;font-weight:600;padding:10px}
     .add-ph b{font-size:34px;line-height:1;color:var(--text)}
-    .add-ph input{display:none}
+    .add-ph{position:relative;overflow:hidden}
+    .add-ph input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+    .ph .ph-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px;text-align:center;background:rgba(15,15,14,.72);color:#fff;font-size:13px;font-weight:700}
+    .ph.st-err .ph-state{background:rgba(140,30,15,.82);cursor:pointer}
+    .ph .spin{width:26px;height:26px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
     .hint{font-weight:400;font-size:13px;color:var(--muted)}
     .ed-acts{display:flex;flex-wrap:wrap;gap:10px}
     @media(max-width:640px){.photos{grid-template-columns:repeat(2,1fr)}.ed-acts .btn{flex:1}}
@@ -216,39 +221,73 @@
     }
     function closeEditor(){editing=null;photos.forEach(x=>x.url&&URL.revokeObjectURL(x.url));photos=[];render()}
     $('addPiece').addEventListener('click',()=>openEditor(null));
-    $('edCancel').addEventListener('click',()=>{if(!busy)closeEditor()});
+    $('edCancel').addEventListener('click',()=>{if(busy)return;if(queueBusy()&&!confirm('Des photos sont encore en cours d’envoi. Annuler quand même ?'))return;closeEditor()});
     $('edCat').addEventListener('change',()=>{const n=$('edCat').value==='__new';$('edNewCatWrap').hidden=!n;if(n)$('edNewCat').focus()});
 
+    /* Les photos partent dès qu'elles sont choisies (pendant qu'on remplit le reste), une par une pour ménager la mémoire du téléphone. */
+    const LABEL={wait:'En attente…',prep:'Préparation…',up:'Envoi…',err:'Échec — toucher pour réessayer'};
     function drawPhotos(){
       const n=photos.length;
-      $('edPhotos').innerHTML=photos.map((x,k)=>'<div class="ph"><img src="'+(x.url||src(x.id,640))+'" alt="">'+(k===0?'<span class="main">Photo principale</span>':'')+
-        '<div class="tools"><button type="button" data-mv="-1" data-k="'+k+'" aria-label="Avancer la photo"'+(k===0?' disabled':'')+'>◀</button><button type="button" class="rm" data-rm="'+k+'" aria-label="Retirer la photo">✕</button><button type="button" data-mv="1" data-k="'+k+'" aria-label="Reculer la photo"'+(k===n-1?' disabled':'')+'>▶</button></div></div>').join('')+
+      $('edPhotos').innerHTML=photos.map((x,k)=>{const ok=!x.state||x.state==='ok';
+        return '<div class="ph'+(ok?'':' st-'+x.state)+'"'+(x.state==='err'?' data-retry="'+k+'"':'')+'>'+(x.url||x.id?'<img src="'+(x.url||src(x.id,640))+'" alt="">':'')+(k===0?'<span class="main">Photo principale</span>':'')+
+        (ok?'':'<span class="ph-state">'+(x.state==='err'?'':'<i class="spin"></i>')+LABEL[x.state]+'</span>')+
+        '<div class="tools"><button type="button" data-mv="-1" data-k="'+k+'" aria-label="Avancer la photo"'+(k===0?' disabled':'')+'>◀</button><button type="button" class="rm" data-rm="'+k+'" aria-label="Retirer la photo">✕</button><button type="button" data-mv="1" data-k="'+k+'" aria-label="Reculer la photo"'+(k===n-1?' disabled':'')+'>▶</button></div></div>'}).join('')+
         (n<12?'<label class="add-ph"><b>+</b>'+(n?'Ajouter des photos':'Ajouter les photos')+'<input type="file" id="edFiles" accept="image/*" multiple></label>':'');
-      const f=$('edFiles');if(f)f.addEventListener('change',()=>{[...f.files].slice(0,12-photos.length).forEach(file=>photos.push({file,url:URL.createObjectURL(file)}));drawPhotos()});
+      const f=$('edFiles');if(f)f.addEventListener('change',()=>{[...f.files].slice(0,12-photos.length).forEach(file=>photos.push({file,state:'wait'}));f.value='';drawPhotos();runQueue()});
+      const pend=photos.filter(x=>x.state&&x.state!=='ok'&&x.state!=='err').length;
+      if(editing&&!busy){$('edMsg').className='msg';$('edMsg').textContent=pend?'Envoi des photos en cours ('+(photos.filter(x=>x.state==='ok'||!x.state).length)+' / '+photos.length+'). Vous pouvez remplir le reste en attendant, sans quitter la page.':''}
     }
-    $('edPhotos').addEventListener('click',e=>{if(busy)return;const rm=e.target.closest('[data-rm]'),mv=e.target.closest('[data-mv]');
-      if(rm){const [x]=photos.splice(+rm.dataset.rm,1);if(x&&x.url)URL.revokeObjectURL(x.url);drawPhotos()}
-      if(mv){const k=+mv.dataset.k,j=k+ +mv.dataset.mv;[photos[k],photos[j]]=[photos[j],photos[k]];drawPhotos()}});
+    $('edPhotos').addEventListener('click',e=>{if(busy)return;const rm=e.target.closest('[data-rm]'),mv=e.target.closest('[data-mv]'),rt=e.target.closest('[data-retry]');
+      if(rm){const [x]=photos.splice(+rm.dataset.rm,1);if(x){x.cancel=true;if(x.url)URL.revokeObjectURL(x.url)}drawPhotos();return}
+      if(mv){const k=+mv.dataset.k,j=k+ +mv.dataset.mv;[photos[k],photos[j]]=[photos[j],photos[k]];drawPhotos();return}
+      if(rt){photos[+rt.dataset.retry].state='wait';drawPhotos();runQueue()}});
 
     /* Photo redressée (sens du téléphone), réduite à 1280 px et 640 px de grand côté, compressée en JPEG de bonne qualité */
-    function loadImg(url){return new Promise((ok,ko)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>ko(new Error('format'));im.src=url})}
-    function scaled(im,max,q){
-      let w=im.naturalWidth,h=im.naturalHeight;const r=Math.min(1,max/Math.max(w,h));const tw=Math.round(w*r),th=Math.round(h*r);
-      let cur=im,cw=w,ch=h;
-      while(cw/2>tw){const c=document.createElement('canvas');c.width=Math.round(cw/2);c.height=Math.round(ch/2);const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(cur,0,0,c.width,c.height);cur=c;cw=c.width;ch=c.height}
-      const c=document.createElement('canvas');c.width=tw;c.height=th;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,tw,th);x.imageSmoothingQuality='high';x.drawImage(cur,0,0,tw,th);
-      return new Promise((ok,ko)=>c.toBlob(b=>b?ok(b):ko(new Error('jpeg')),'image/jpeg',q));
+    async function decode(file){
+      if(window.createImageBitmap){try{return await createImageBitmap(file,{imageOrientation:'from-image'})}catch(e){}}
+      const url=URL.createObjectURL(file);
+      try{return await new Promise((ok,ko)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>ko(new Error('format'));im.src=url})}finally{setTimeout(()=>URL.revokeObjectURL(url),1000)}
     }
-    async function upload(x){
-      const im=await loadImg(x.url);
-      const id='u/'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-      for(const [size,q] of [[1280,.86],[640,.82]]){
-        const blob=await scaled(im,size,q);
-        const {error}=await sb.storage.from('oeuvres').upload(id+'-'+size+'.jpg',blob,{contentType:'image/jpeg',cacheControl:'31536000',upsert:false});
-        if(error)throw error;
+    function canvasOf(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
+    function toJpeg(c,q){return new Promise((ok,ko)=>c.toBlob(b=>b?ok(b):ko(new Error('jpeg')),'image/jpeg',q))}
+    async function prepare(file){
+      const im=await decode(file);
+      const w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;if(!w||!h)throw new Error('format');
+      const step=(srcEl,sw,sh,tw,th)=>{let cur=srcEl,cw=sw,ch=sh;const tmp=[];
+        while(cw/2>tw){const c=canvasOf(Math.round(cw/2),Math.round(ch/2));const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(cur,0,0,c.width,c.height);tmp.push(c);cur=c;cw=c.width;ch=c.height}
+        const c=canvasOf(tw,th);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,tw,th);x.imageSmoothingQuality='high';x.drawImage(cur,0,0,tw,th);
+        tmp.forEach(t=>{t.width=t.height=0});return c};
+      const r1=Math.min(1,1280/Math.max(w,h));const c1=step(im,w,h,Math.round(w*r1),Math.round(h*r1));
+      if(im.close)im.close();
+      const r2=Math.min(1,640/Math.max(c1.width,c1.height));const c2=step(c1,c1.width,c1.height,Math.round(c1.width*r2),Math.round(c1.height*r2));
+      const big=await toJpeg(c1,.85),small=await toJpeg(c2,.82);
+      c1.width=c1.height=0;c2.width=c2.height=0;
+      return {big,small};
+    }
+    const put=(path,blob)=>sb.storage.from('oeuvres').upload(path,blob,{contentType:'image/jpeg',cacheControl:'31536000',upsert:false}).then(({error})=>{if(error)throw error});
+    let running=false,wake=null;
+    const queueBusy=()=>photos.some(x=>x.state&&x.state!=='ok'&&x.state!=='err');
+    async function runQueue(){
+      if(running)return;running=true;
+      try{if('wakeLock' in navigator&&!wake)wake=await navigator.wakeLock.request('screen')}catch(e){}
+      let x;
+      while((x=photos.find(p=>p.state==='wait'))){
+        x.state='prep';drawPhotos();
+        try{
+          const {big,small}=await prepare(x.file);if(x.cancel)continue;
+          x.url=URL.createObjectURL(small);x.state='up';drawPhotos();
+          const id='u/'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+          let tries=0;
+          for(;;){try{await Promise.all([put(id+'-1280.jpg',big),put(id+'-640.jpg',small)]);break}catch(err){if(++tries>=3)throw err;await new Promise(r=>setTimeout(r,1500*tries))}}
+          x.id=id;x.state='ok';x.file=null;
+        }catch(err){x.state='err';x.errFormat=err&&err.message==='format'}
+        drawPhotos();
       }
-      return id;
+      running=false;try{if(wake){await wake.release();wake=null}}catch(e){}
+      drawPhotos();
     }
+    document.addEventListener('visibilitychange',async()=>{if(document.visibilityState==='visible'&&running&&!wake&&'wakeLock' in navigator){try{wake=await navigator.wakeLock.request('screen')}catch(e){}}});
+    addEventListener('beforeunload',e=>{if(queueBusy()||busy){e.preventDefault();e.returnValue=''}});
 
     $('editor').addEventListener('submit',async e=>{
       e.preventDefault();if(busy)return;
@@ -259,15 +298,11 @@
       if(!photos.length)return m('Ajoutez au moins une photo.',1);
       busy=true;$('edSave').disabled=true;
       try{
-        const ids=[];const todo=photos.filter(x=>x.file).length;let done=0;
-        for(const x of photos){
-          if(x.file){m('Préparation et envoi des photos… '+(++done)+' / '+todo);
-            try{x.id=await upload(x)}catch(err){throw new Error(err.message==='format'?'Une des photos n’a pas pu être lue. Essayez une photo au format JPEG.':'L’envoi d’une photo n’a pas fonctionné. Vérifiez la connexion et réessayez.')}
-            x.file=null}
-          ids.push(x.id);
-        }
+        while(queueBusy()){const ok=photos.filter(x=>!x.state||x.state==='ok').length;m('Envoi des photos en cours… '+ok+' / '+photos.length+' — ne quittez pas la page.');await new Promise(r=>setTimeout(r,500))}
+        const bad=photos.filter(x=>x.state==='err');
+        if(bad.length)throw new Error(bad.some(x=>x.errFormat)?'Une photo n’a pas pu être lue. Retirez-la ou essayez une autre photo.':'Une photo n’a pas pu être envoyée (connexion). Touchez-la pour réessayer, puis enregistrez.');
         m('Enregistrement…');
-        const row={name,cat,photos:ids,avant:$('edAvant').checked};
+        const row={name,cat,photos:photos.map(x=>x.id),avant:$('edAvant').checked};
         let res;
         if(editing.slug)res=await sb.from('pieces').update(row).eq('slug',editing.slug);
         else{const min=Math.min(0,...pieces.map(p=>p.ordre||0));res=await sb.from('pieces').insert({...row,slug:'piece-'+Date.now().toString(36),ordre:min-1,visible:true,reserved:false})}
