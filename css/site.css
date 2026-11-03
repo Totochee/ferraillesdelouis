@@ -495,3 +495,7 @@
     .legal td:first-child,.legal td:last-child{white-space:nowrap}
     footer .f-legal a{white-space:nowrap}
     @media(min-width:861px) and (max-width:1250px){footer .f-legal{order:3;flex-basis:100%}footer .credit{order:4}}
+    /* Crédit plus visible (même rendu que le site du 10 km du Château) */
+    footer .credit{gap:10px;margin-top:10px;padding-top:22px;font-size:13px;font-weight:700;letter-spacing:.04em;color:#fff;opacity:1}
+    footer .credit .tbsn{font-size:19px}
+    footer .credit:hover .tbsn span{text-decoration:underline}
