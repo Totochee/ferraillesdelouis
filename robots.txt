@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-Sitemap: https://www.ferraillesdelouis.fr/sitemap.xml
+Sitemap: https://ferraillesdelouis.fr/sitemap.xml
